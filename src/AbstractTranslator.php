@@ -33,6 +33,13 @@ abstract class AbstractTranslator
 	protected $request;
 
 	/**
+	 * The response from API
+	 *
+	 * @var \GuzzleHttp\Psr7\Response
+	 */
+	protected $response = null;
+
+	/**
 	 * The language from which we are translating
 	 *
 	 * @var string
@@ -89,6 +96,17 @@ abstract class AbstractTranslator
 	}
 
 	/**
+	 * Return the response from API
+	 *
+	 * @return \GuzzleHttp\Psr7\Response
+	 */
+	public function getResponse()
+	{
+		//Return response
+		return $this->response;
+	}
+
+	/**
 	 * Return the authorization for making request
 	 *
 	 * @return array
@@ -111,7 +129,7 @@ abstract class AbstractTranslator
 		//Return headers
 		return [
 			'headers' => [
-				'Accept' => 'application/json'
+				'Accept' => 'application/json',
 			]
 		];
 	}
@@ -169,11 +187,11 @@ abstract class AbstractTranslator
 	 * @param array $options
 	 * @return self
 	 */
-	protected function request($method = 'GET', $uri = null, $options = [])
+	public function request($method = 'GET', $uri = null, $options = [])
 	{
 		//Build the request
 		$this->request = new Request($method, $uri, $options);
-		//Return the request
+		//return the translator
 		return $this;
 	}
 
@@ -181,11 +199,24 @@ abstract class AbstractTranslator
 	 * Send API request to Watson service
 	 *
 	 * @param array $options
-	 * @return \GuzzleHttp\Psr7\Response
+	 * @return self
 	 */
-	protected function send($options = [])
+	public function send($options = [])
 	{
 		//Send request with client and return response
-		return $this->client->send($this->request, collect($this->getAuth())->merge($this->getHeaders())->merge($options)->all());
+		$this->response = $this->client->send($this->request, collect($this->getAuth())->merge($this->getHeaders())->merge($options)->all());
+		//return the translator
+		return $this;
+	}
+
+	/**
+	 * Returns the results of the response as a collection
+	 *
+	 * @return \Illuminate\Support\Collection|null
+	 */
+	public function collectResults()
+	{
+		//Return response as collection or null if not set
+		return ($this->getResponse() != null)?collect(json_decode($this->getResponse()->getBody()->getContents(), true)):null;
 	}
 }
