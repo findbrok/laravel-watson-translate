@@ -3,6 +3,7 @@
 namespace FindBrok\WatsonTranslate;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\AliasLoader;
 
 /**
  * Class WatsonTranslateServiceProvider
@@ -34,5 +35,15 @@ class WatsonTranslateServiceProvider extends ServiceProvider
 	    $this->mergeConfigFrom(
 		    __DIR__.'/config/watson-translate.php', 'watson-translate'
 	    );
+
+	    //Bind Implementation of the Translator interface
+	    $this->app->bind('FindBrok\WatsonTranslate\Contracts\TranslatorInterface', 'FindBrok\WatsonTranslate\Translator');
+	    //Add Facade to the Translator service
+	    $this->app->booting(function() {
+		    //Get loader instance
+		    $loader = AliasLoader::getInstance();
+		    //Add alias
+		    $loader->alias('WatsonTranslate', 'FindBrok\WatsonTranslate\Facades\TranslatorFacade');
+	    });
     }
 }
