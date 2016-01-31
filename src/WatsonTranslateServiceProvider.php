@@ -17,7 +17,10 @@ class WatsonTranslateServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        //Publish config file
+	    $this->publishes([
+		    __DIR__.'/config/watson-translate.php' => config_path('watson-translate.php')
+	    ]);
     }
 
     /**
@@ -27,6 +30,9 @@ class WatsonTranslateServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        //Merge config file
+	    $this->mergeConfigFrom(
+		    __DIR__.'/config/watson-translate.php', 'watson-translate'
+	    );
     }
 }
