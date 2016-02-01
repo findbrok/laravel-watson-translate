@@ -32,4 +32,47 @@ interface TranslatorInterface
 	 * @return \Illuminate\Support\Collection|null
 	 */
 	public function listLanguages();
+
+	/**
+	 * Identify the language in which the text is written
+	 * with a certain level of confidence
+	 *
+	 * @param string $text
+	 * @return \Illuminate\Support\Collection|null
+	 */
+	public function identifyLanguage($text = '');
+
+	/**
+	 * Lists available standard and custom models by source or target language.
+	 *
+	 * @param bool $defaultOnly
+	 * @param string $sourceFilter
+	 * @param string $targetFilter
+	 * @return \Illuminate\Support\Collection|null
+	 */
+	public function listModels($defaultOnly = null, $sourceFilter = null, $targetFilter = null);
+
+	/**
+	 * Returns information, including training status, about a specified translation model.
+	 *
+	 * @return \Illuminate\Support\Collection|null
+	 */
+	public function getModelDetails();
+
+	/**
+	 * Creates a new translation model
+	 *
+	 * @param string $baseModelId
+	 * @param string $modelName
+	 * @return mixed
+	 */
+	public function createModel($baseModelId = null, $modelName = null);
+
+	/**
+	 * Delete a translation model
+	 *
+	 * @param string $modelId
+	 * @return mixed
+	 */
+	public function deleteModel($modelId = null);
 }

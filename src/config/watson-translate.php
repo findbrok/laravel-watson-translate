@@ -27,6 +27,29 @@ return [
 
 	/*
     |--------------------------------------------------------------------------
+    | X-Watson-Learning-Opt-Out
+    |--------------------------------------------------------------------------
+    |
+    | By default, Watson collects data from all requests and uses the data to improve the service.
+	| If you do not want to share your data, set this value to true.
+    |
+    */
+	'x_watson_learning_opt_out' => false,
+
+	/*
+    |--------------------------------------------------------------------------
+    | Translator Implementation
+    |--------------------------------------------------------------------------
+    |
+    | By default the interface is implemented by FindBrok\WatsonTranslate\Translator
+	| Change this value to your own implementation if you wish to override the
+	| implementation of the Translator interface
+    |
+    */
+	'translator_implementation' => 'FindBrok\WatsonTranslate\Translator',
+
+	/*
+    |--------------------------------------------------------------------------
     | Translations Models
     |--------------------------------------------------------------------------
     |
@@ -37,6 +60,6 @@ return [
     |
     */
 	'models' => [
-		'default' => env('WATSON_TRANSLATE_DEFAULT_MODEL', 'SomeModelId')
+		'default' => env('WATSON_TRANSLATE_DEFAULT_MODEL', 'en-fr')
 	],
 ];

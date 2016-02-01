@@ -91,4 +91,92 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 			return null;
 		}
 	}
+
+	/**
+	 * Identify the language in which the text is written
+	 * with a certain level of confidence
+	 *
+	 * @param string $text
+	 * @return \Illuminate\Support\Collection|null
+	 */
+	public function identifyLanguage($text = '')
+	{
+		try {
+			//Perform a post request to identify the language
+			return $this->request('POST', 'v2/identify')->send([
+				'query' => collect([
+					'text' => $text
+				])->all()
+			])->collectResults();
+		} catch (ClientException $e) {
+			//Unexpected client error
+			return null;
+		}
+	}
+
+	/**
+	 * Lists available standard and custom models by source or target language.
+	 *
+	 * @param bool $defaultOnly
+	 * @param string $sourceFilter
+	 * @param string $targetFilter
+	 * @return \Illuminate\Support\Collection|null
+	 */
+	public function listModels($defaultOnly = null, $sourceFilter = null, $targetFilter = null)
+	{
+		try {
+			//Perform a get request to list all models and return it
+			return $this->request('GET', 'v2/models')->send([
+				'query' => collect([
+					'source'    => $sourceFilter,
+					'target'    => $targetFilter,
+					'default'   => $defaultOnly,
+				])->reject(function($item) {
+					return $item == null || $item == '';
+				})->all()
+			])->collectResults();
+		} catch (ClientException $e) {
+			//Unexpected client error
+			return null;
+		}
+	}
+
+	/**
+	 * Returns information, including training status, about a specified translation model.
+	 *
+	 * @return \Illuminate\Support\Collection|null
+	 */
+	public function getModelDetails()
+	{
+		try {
+			//Perform a get Request to get the model's Details and return it
+			return $this->request('GET', 'v2/models/'.$this->modelId)->send()->collectResults();
+		} catch (ClientException $e) {
+			//Unexpected client error
+			return null;
+		}
+	}
+
+	/**
+	 * Creates a new translation model
+	 *
+	 * @param string $baseModelId
+	 * @param string $modelName
+	 * @return mixed
+	 */
+	public function createModel($baseModelId = null, $modelName = null)
+	{
+		//TODO:Implement creation of Translation model
+	}
+
+	/**
+	 * Delete a translation model
+	 *
+	 * @param string $modelId
+	 * @return mixed
+	 */
+	public function deleteModel($modelId = null)
+	{
+		//TODO:Implement deletion of translation model
+	}
 }

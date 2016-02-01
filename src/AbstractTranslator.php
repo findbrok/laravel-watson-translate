@@ -130,6 +130,7 @@ abstract class AbstractTranslator
 		return [
 			'headers' => [
 				'Accept' => 'application/json',
+				'X-Watson-Learning-Opt-Out' => config('watson-translate.x_watson_learning_opt_out')
 			]
 		];
 	}
@@ -174,7 +175,7 @@ abstract class AbstractTranslator
 	public function usingModel($modelName = '')
 	{
 		//Set the model id
-		$this->modelId = config('watson-translate.models.'.$modelName);
+		$this->modelId = ($modelName == '')?config('watson-translate.models.default'):config('watson-translate.models.'.$modelName);
 		//return the translator
 		return $this;
 	}
