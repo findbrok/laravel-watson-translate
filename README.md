@@ -1,8 +1,8 @@
 # Laravel 5 IBM Watson Translate
 
-This package provides an api to perform translations using the IBM Watson Language Translation service. 
+This package provides a simple api to perform translations using the IBM Watson Language Translation service. 
 
-To get a better understand of how this package work read the docs for Watson Language Translation service first.
+To get a better understanding of how this package works read the documentation for Watson Language Translation service first.
 
 - [Getting started with the Language Translation service](https://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/language-translation/)
 - [API Explorer](https://watson-api-explorer.mybluemix.net/apis/language-translation-v2)
@@ -19,7 +19,7 @@ Begin by installing this package through Composer.
 }
 ```
 
-Add the WatsonTranslateServiceProvider to your provider array
+Add the WatsonTranslateServiceProvider to your providers array
 
 ```php
 // config/app.php
