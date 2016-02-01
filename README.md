@@ -4,9 +4,9 @@ This package provides an api to perform translations using the IBM Watson Langua
 
 To get a better understand of how this package work read the docs for Watson Language Translation service first.
 
-[Getting started with the Language Translation service](https://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/language-translation/)
-[API Explorer](https://watson-api-explorer.mybluemix.net/apis/language-translation-v2)
-[API reference](https://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/language-translation/api/v2/)
+- [Getting started with the Language Translation service](https://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/doc/language-translation/)
+- [API Explorer](https://watson-api-explorer.mybluemix.net/apis/language-translation-v2)
+- [API reference](https://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/language-translation/api/v2/)
 
 ## Installation
 Begin by installing this package through Composer.
