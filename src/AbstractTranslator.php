@@ -204,6 +204,8 @@ abstract class AbstractTranslator
 	 */
 	public function send($options = [])
 	{
+		/*$mock = new \FindBrok\WatsonTranslate\Tests\Mocks\MockResponses();
+		$response = $mock->textTranslateSuccess();*/
 		//Send request with client and return response
 		$this->response = $this->client->send($this->request, collect($this->getAuth())->merge($this->getHeaders())->merge($options)->all());
 		//return the translator
