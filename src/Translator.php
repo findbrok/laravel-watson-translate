@@ -17,7 +17,7 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 	 * Translates the input text from the source language to the target language
 	 *
 	 * @param string $text
-	 * @return \Illuminate\Support\Collection|null
+	 * @return self|null
 	 */
 	public function textTranslate($text = '')
 	{
@@ -28,7 +28,7 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 				return null;
 			}
 			//Perform get request on client and return results
-			return $this->request('GET', 'v2/translate')->send([
+            $this->request('GET', 'v2/translate')->send([
 				'query' => collect([
 					'model_id'  => $this->modelId,
 					'source'    => $this->from,
@@ -37,7 +37,9 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 				])->reject(function($item) {
 					return $item == null || $item == '';
 				})->all()
-			])->collectResults();
+			]);
+            //Return the object
+            return $this;
 		} catch (ClientException $e) {
 			//Unexpected client error
 			return null;
@@ -49,7 +51,7 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 	 * Also used to translate multiple paragraphs or multiple inputs
 	 *
 	 * @param string|array $text
-	 * @return \Illuminate\Support\Collection|null
+	 * @return self|null
 	 */
 	public function bulkTranslate($text = null)
 	{
@@ -60,7 +62,7 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 				return null;
 			}
 			//Perform a Post request on client and return results
-			return $this->request('POST', 'v2/translate')->send([
+			$this->request('POST', 'v2/translate')->send([
 				'json' => collect([
 					'model_id'  => $this->modelId,
 					'source'    => $this->from,
@@ -69,7 +71,9 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 				])->reject(function($item) {
 					return $item == null || $item == '';
 				})->all()
-			])->collectResults();
+			]);
+            //Return the object
+            return $this;
 		} catch (ClientException $e) {
 			//Unexpected client error
 			return null;
@@ -79,13 +83,15 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 	/**
 	 * List all languages that can be identified by watson
 	 *
-	 * @return \Illuminate\Support\Collection|null
+	 * @return self|null
 	 */
 	public function listLanguages()
 	{
 		try {
 			//Perform a Get request on client and return results
-			return $this->request('GET', 'v2/identifiable_languages')->send()->collectResults();
+			$this->request('GET', 'v2/identifiable_languages')->send();
+            //Return the object
+            return $this;
 		} catch (ClientException $e) {
 			//Unexpected client error
 			return null;
@@ -97,17 +103,19 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 	 * with a certain level of confidence
 	 *
 	 * @param string $text
-	 * @return \Illuminate\Support\Collection|null
+	 * @return self|null
 	 */
 	public function identifyLanguage($text = '')
 	{
 		try {
 			//Perform a post request to identify the language
-			return $this->request('POST', 'v2/identify')->send([
+            $this->request('POST', 'v2/identify')->send([
 				'query' => collect([
 					'text' => $text
 				])->all()
-			])->collectResults();
+			]);
+            //Return the object
+            return $this;
 		} catch (ClientException $e) {
 			//Unexpected client error
 			return null;
@@ -120,13 +128,13 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 	 * @param bool $defaultOnly
 	 * @param string $sourceFilter
 	 * @param string $targetFilter
-	 * @return \Illuminate\Support\Collection|null
+	 * @return self|null
 	 */
 	public function listModels($defaultOnly = null, $sourceFilter = null, $targetFilter = null)
 	{
 		try {
 			//Perform a get request to list all models and return it
-			return $this->request('GET', 'v2/models')->send([
+			$this->request('GET', 'v2/models')->send([
 				'query' => collect([
 					'source'    => $sourceFilter,
 					'target'    => $targetFilter,
@@ -134,7 +142,9 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 				])->reject(function($item) {
 					return $item == null || $item == '';
 				})->all()
-			])->collectResults();
+			]);
+            //Return the object
+            return $this;
 		} catch (ClientException $e) {
 			//Unexpected client error
 			return null;
@@ -144,13 +154,15 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 	/**
 	 * Returns information, including training status, about a specified translation model.
 	 *
-	 * @return \Illuminate\Support\Collection|null
+	 * @return self|null
 	 */
 	public function getModelDetails()
 	{
 		try {
 			//Perform a get Request to get the model's Details and return it
-			return $this->request('GET', 'v2/models/'.$this->modelId)->send()->collectResults();
+            $this->request('GET', 'v2/models/'.$this->modelId)->send();
+            //Return the object
+            return $this;
 		} catch (ClientException $e) {
 			//Unexpected client error
 			return null;

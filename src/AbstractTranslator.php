@@ -4,6 +4,8 @@ namespace FindBrok\WatsonTranslate;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use FindBrok\WatsonTranslate\Tests\Mocks\MockResponses;
+use FindBrok\WatsonTranslate\Presenters\ResultsCollection;
 
 /**
  * Class AbstractTranslator
@@ -11,6 +13,11 @@ use GuzzleHttp\Psr7\Request;
  */
 abstract class AbstractTranslator
 {
+    /**
+     * Translator's traits
+     */
+    use ResultsCollection;
+
 	/**
 	 * Api end point of the translation service
 	 *
@@ -38,6 +45,13 @@ abstract class AbstractTranslator
 	 * @var \GuzzleHttp\Psr7\Response
 	 */
 	protected $response = null;
+
+    /**
+     * The results from the request
+     *
+     * @var string
+     */
+    protected $results = null;
 
 	/**
 	 * The language from which we are translating
@@ -68,6 +82,28 @@ abstract class AbstractTranslator
 		//Set the client
 		$this->setClient();
 	}
+
+    /**
+     * Calling method that does not exist for testing
+     *
+     * @param $method
+     * @param $parameters
+     * @return self|null
+     */
+    public function __call($method, $parameters)
+    {
+        //Check if this is a pretend method for mocking responses
+        if(method_exists(new MockResponses, $method)) {
+            //Call pretend method
+            $this->response = call_user_func_array([new MockResponses, $method], $parameters);
+            //Add results to class
+            $this->results = $this->response->getBody()->getContents();
+            //Return the object
+            return $this;
+        }
+        //Return
+        return null;
+    }
 
 	/**
 	 * Creates the http client
@@ -204,22 +240,11 @@ abstract class AbstractTranslator
 	 */
 	public function send($options = [])
 	{
-		/*$mock = new \FindBrok\WatsonTranslate\Tests\Mocks\MockResponses();
-		$response = $mock->textTranslateSuccess();*/
 		//Send request with client and return response
 		$this->response = $this->client->send($this->request, collect($this->getAuth())->merge($this->getHeaders())->merge($options)->all());
+        //Add results to class
+        $this->results = $this->response->getBody()->getContents();
 		//return the translator
 		return $this;
-	}
-
-	/**
-	 * Returns the results of the response as a collection
-	 *
-	 * @return \Illuminate\Support\Collection|null
-	 */
-	public function collectResults()
-	{
-		//Return response as collection or null if not set
-		return ($this->getResponse() != null)?collect(json_decode($this->getResponse()->getBody()->getContents(), true)):null;
 	}
 }
