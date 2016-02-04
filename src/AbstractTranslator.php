@@ -82,28 +82,6 @@ abstract class AbstractTranslator
 		$this->setClient();
 	}
 
-    /**
-     * Calling method that does not exist for testing
-     *
-     * @param $method
-     * @param $parameters
-     * @return self|null
-     */
-    public function __call($method, $parameters)
-    {
-        //Check if this is a pretend method for mocking responses
-        if(method_exists(new \FindBrok\WatsonTranslate\Tests\Mocks\MockResponses, $method)) {
-            //Call pretend method
-            $this->response = call_user_func_array([new \FindBrok\WatsonTranslate\Tests\Mocks\MockResponses, $method], $parameters);
-            //Add results to class
-            $this->results = $this->response->getBody()->getContents();
-            //Return the object
-            return $this;
-        }
-        //Return
-        return null;
-    }
-
 	/**
 	 * Creates the http client
 	 *

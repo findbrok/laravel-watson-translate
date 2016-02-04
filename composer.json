@@ -19,8 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "FindBrok\\WatsonTranslate\\": "src/",
-			"FindBrok\\WatsonTranslate\\Tests\\": "packages/findbrok/laravel-watson-translate/tests/"
+            "FindBrok\\WatsonTranslate\\": "src/"
         }
     }
 }
