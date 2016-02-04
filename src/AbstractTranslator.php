@@ -4,7 +4,6 @@ namespace FindBrok\WatsonTranslate;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
-use FindBrok\WatsonTranslate\Tests\Mocks\MockResponses;
 use FindBrok\WatsonTranslate\Presenters\ResultsCollection;
 
 /**
@@ -93,9 +92,9 @@ abstract class AbstractTranslator
     public function __call($method, $parameters)
     {
         //Check if this is a pretend method for mocking responses
-        if(method_exists(new MockResponses, $method)) {
+        if(method_exists(new \FindBrok\WatsonTranslate\Tests\Mocks\MockResponses, $method)) {
             //Call pretend method
-            $this->response = call_user_func_array([new MockResponses, $method], $parameters);
+            $this->response = call_user_func_array([new \FindBrok\WatsonTranslate\Tests\Mocks\MockResponses, $method], $parameters);
             //Add results to class
             $this->results = $this->response->getBody()->getContents();
             //Return the object
