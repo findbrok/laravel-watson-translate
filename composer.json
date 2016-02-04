@@ -11,13 +11,17 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "~5.0",
+        "illuminate/support": "~5.0|~5.1|~5.2",
         "guzzlehttp/guzzle": "~5.3|~6.0"
     },
     "require-dev": {
-        "fzaninotto/faker": "~1.4"
+        "fzaninotto/faker": "~1.4",
+        "phpunit/phpunit": "~4.0"
     },
     "autoload": {
+        "classmap": [
+            "tests/TestCase.php"
+        ],
         "psr-4": {
             "FindBrok\\WatsonTranslate\\": "src/"
         }
