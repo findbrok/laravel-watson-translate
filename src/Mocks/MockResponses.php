@@ -1,6 +1,6 @@
 <?php
 
-namespace FindBrok\WatsonTranslate\Tests\Mocks;
+namespace FindBrok\WatsonTranslate\Mocks;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
