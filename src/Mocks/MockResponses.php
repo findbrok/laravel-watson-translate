@@ -39,10 +39,10 @@ class MockResponses
 	 *
 	 * @return GuzzleHttp\Psr7\Response
 	 */
-	public function pretendTextTranslate()
+	public function pretendTextTranslateResponse()
 	{
         //New sentence
-        $sentence = $this->faker->sentence(rand(6, 10));
+        $sentence = 'Lorem ipsum';
 		//Build a new successful response for text translate
 		return new Response(202, [
 			'Content-Type' => 'application/json'
@@ -53,6 +53,16 @@ class MockResponses
 			'word_count'        => count(explode(' ', $sentence)),
 			'character_count'   => strlen($sentence),
 		])->toJson());
+	}
+
+	/**
+	 * Mock a result for text translate function
+	 *
+	 * @return string
+	 */
+	public function pretendTextTranslateResults()
+	{
+		return $this->pretendTextTranslateResponse()->getBody()->getContents();
 	}
 
     /**

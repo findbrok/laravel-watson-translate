@@ -1,6 +1,8 @@
 <?php
 
 use Orchestra\Testbench\TestCase as TestBenchTestCase;
+use Mockery;
+use FindBrok\WatsonTranslate\Mocks\MockResponses;
 
 /**
  * Class TestCase
@@ -15,6 +17,8 @@ class TestCase extends TestBenchTestCase
 		parent::setUp();
 		//Create translator class
 		$this->translator = app()->make('FindBrok\WatsonTranslate\Contracts\TranslatorInterface');
+		//Create instance of mock responses
+		$this->mockResponses = new MockResponses;
 	}
 
 	/**
@@ -26,7 +30,7 @@ class TestCase extends TestBenchTestCase
 		$this->translator->from('en')->to('fr')->usingModel('default');
 		$this->assertEquals($this->translator->from, 'en');
 		$this->assertEquals($this->translator->to, 'fr');
-		$this->assertEquals($this->translator->modelId, config('watson-translate.models.default'));
+		$this->assertEquals(config('watson-translate.models.default'), $this->translator->modelId);
 	}
 
 	/**
@@ -35,7 +39,18 @@ class TestCase extends TestBenchTestCase
 	 */
 	public function testPropertyInexistent_ReturnNull()
 	{
-		$this->assertEquals($this->translator->foo, null);
+		$this->assertEquals(null, $this->translator->foo);
+	}
+
+	/**
+	 * Test text translate with getTranslation method returns string
+	 */
+	public function testTextTranslate_GetTranslation_ReturnString()
+	{
+		$translator = Mockery::mock('FindBrok\WatsonTranslate\Translator');
+		$translator->shouldReceive('textTranslate')->andReturn(Mockery::self());
+		$translator->shouldReceive('getTranslation')->andReturn('Lorem ipsum');
+		$this->assertEquals('Lorem ipsum', $translator->textTranslate()->getTranslation());
 	}
 
 	/**
