@@ -45,6 +45,13 @@ abstract class AbstractTranslator
 	 */
 	protected $response = null;
 
+	/**
+	 * Error message if any
+	 *
+	 * @var string
+	 */
+	protected $error = null;
+
     /**
      * The results from the request
      *
@@ -80,6 +87,23 @@ abstract class AbstractTranslator
 	{
 		//Set the client
 		$this->setClient();
+	}
+
+	/**
+	 * Getting attributes
+	 *
+	 * @param $variable
+	 * @return mixed
+	 */
+	public function __get($attribute)
+	{
+		//Attributes exists
+		if(property_exists($this, $attribute)) {
+			//return the attribute value
+			return $this->$attribute;
+		}
+		//We return null
+		return null;
 	}
 
 	/**

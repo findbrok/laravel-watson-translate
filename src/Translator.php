@@ -17,16 +17,16 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 	 * Translates the input text from the source language to the target language
 	 *
 	 * @param string $text
-	 * @return self|null
+	 * @return self
 	 */
 	public function textTranslate($text = '')
 	{
+		//No text input
+		if($text == '') {
+			//We return
+			return $this;
+		}
 		try {
-			//No text input
-			if($text == '') {
-				//We return null
-				return null;
-			}
 			//Perform get request on client and return results
             $this->request('GET', 'v2/translate')->send([
 				'query' => collect([
@@ -38,12 +38,14 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 					return $item == null || $item == '';
 				})->all()
 			]);
-            //Return the object
-            return $this;
 		} catch (ClientException $e) {
-			//Unexpected client error
-			return null;
+			//Set response to null
+			$this->response = null;
+			//Set error message
+			$this->error = $e->getMessage();
 		}
+		//Return translator object
+		return $this;
 	}
 
 	/**
@@ -51,16 +53,16 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 	 * Also used to translate multiple paragraphs or multiple inputs
 	 *
 	 * @param string|array $text
-	 * @return self|null
+	 * @return self
 	 */
 	public function bulkTranslate($text = null)
 	{
+		//No text input
+		if($text == null) {
+			//We return
+			return $this;
+		}
 		try {
-			//No text input
-			if($text == null) {
-				//We return null
-				return null;
-			}
 			//Perform a Post request on client and return results
 			$this->request('POST', 'v2/translate')->send([
 				'json' => collect([
@@ -72,12 +74,14 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 					return $item == null || $item == '';
 				})->all()
 			]);
-            //Return the object
-            return $this;
 		} catch (ClientException $e) {
-			//Unexpected client error
-			return null;
+			//Set response to null
+			$this->response = null;
+			//Set error message
+			$this->error = $e->getMessage();
 		}
+		//Return translator object
+		return $this;
 	}
 
 	/**
@@ -90,12 +94,14 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 		try {
 			//Perform a Get request on client and return results
 			$this->request('GET', 'v2/identifiable_languages')->send();
-            //Return the object
-            return $this;
 		} catch (ClientException $e) {
-			//Unexpected client error
-			return null;
+			//Set response to null
+			$this->response = null;
+			//Set error message
+			$this->error = $e->getMessage();
 		}
+		//Return translator object
+		return $this;
 	}
 
 	/**
@@ -103,7 +109,7 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 	 * with a certain level of confidence
 	 *
 	 * @param string $text
-	 * @return self|null
+	 * @return self
 	 */
 	public function identifyLanguage($text = '')
 	{
@@ -114,12 +120,14 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 					'text' => $text
 				])->all()
 			]);
-            //Return the object
-            return $this;
 		} catch (ClientException $e) {
-			//Unexpected client error
-			return null;
+			//Set response to null
+			$this->response = null;
+			//Set error message
+			$this->error = $e->getMessage();
 		}
+		//Return translator object
+		return $this;
 	}
 
 	/**
@@ -143,12 +151,14 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 					return $item == null || $item == '';
 				})->all()
 			]);
-            //Return the object
-            return $this;
 		} catch (ClientException $e) {
-			//Unexpected client error
-			return null;
+			//Set response to null
+			$this->response = null;
+			//Set error message
+			$this->error = $e->getMessage();
 		}
+		//Return translator object
+		return $this;
 	}
 
 	/**
@@ -161,12 +171,14 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 		try {
 			//Perform a get Request to get the model's Details and return it
             $this->request('GET', 'v2/models/'.$this->modelId)->send();
-            //Return the object
-            return $this;
 		} catch (ClientException $e) {
-			//Unexpected client error
-			return null;
+			//Set response to null
+			$this->response = null;
+			//Set error message
+			$this->error = $e->getMessage();
 		}
+		//Return translator object
+		return $this;
 	}
 
 	/**
