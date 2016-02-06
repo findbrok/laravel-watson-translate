@@ -38,7 +38,7 @@ trait ResultsCollection
     public function arrayResults()
     {
         //return response as array or null
-        return ($this->results != null)?json_decode($this->results, true):null;
+        return ($this->rawResults() != null)?json_decode($this->rawResults(), true):null;
     }
 
     /**

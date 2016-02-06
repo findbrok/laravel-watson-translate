@@ -56,11 +56,11 @@ class MockResponses
 	}
 
 	/**
-	 * Mock a result for text translate function
+	 * Mock a raw json results for text translate function
 	 *
 	 * @return string
 	 */
-	public function pretendTextTranslateResults()
+	public function pretendTextTranslateRaw()
 	{
 		return $this->pretendTextTranslateResponse()->getBody()->getContents();
 	}

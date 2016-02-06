@@ -1,7 +1,6 @@
 <?php
 
 use Orchestra\Testbench\TestCase as TestBenchTestCase;
-use Mockery;
 use FindBrok\WatsonTranslate\Mocks\MockResponses;
 
 /**
@@ -17,7 +16,7 @@ class TestCase extends TestBenchTestCase
 		parent::setUp();
 		//Create translator class
 		$this->translator = app()->make('FindBrok\WatsonTranslate\Contracts\TranslatorInterface');
-		//Create instance of mock responses
+		//Create mock responses
 		$this->mockResponses = new MockResponses;
 	}
 
@@ -28,8 +27,8 @@ class TestCase extends TestBenchTestCase
 	public function testSetterGetter()
 	{
 		$this->translator->from('en')->to('fr')->usingModel('default');
-		$this->assertEquals($this->translator->from, 'en');
-		$this->assertEquals($this->translator->to, 'fr');
+		$this->assertEquals('en', $this->translator->from);
+		$this->assertEquals('fr', $this->translator->to);
 		$this->assertEquals(config('watson-translate.models.default'), $this->translator->modelId);
 	}
 
@@ -39,7 +38,7 @@ class TestCase extends TestBenchTestCase
 	 */
 	public function testPropertyInexistent_ReturnNull()
 	{
-		$this->assertEquals(null, $this->translator->foo);
+		$this->assertNull($this->translator->foo);
 	}
 
 	/**
@@ -47,10 +46,12 @@ class TestCase extends TestBenchTestCase
 	 */
 	public function testTextTranslate_GetTranslation_ReturnString()
 	{
-		$translator = Mockery::mock('FindBrok\WatsonTranslate\Translator');
-		$translator->shouldReceive('textTranslate')->andReturn(Mockery::self());
-		$translator->shouldReceive('getTranslation')->andReturn('Lorem ipsum');
-		$this->assertEquals('Lorem ipsum', $translator->textTranslate()->getTranslation());
+		$translator = $this->getMock('FindBrok\WatsonTranslate\Translator', ['request', 'send', 'getResponse', 'rawResults']);
+		$translator->method('request')->willReturnSelf();
+		$translator->method('send')->willReturnSelf();
+		$translator->method('getResponse')->willReturn($this->mockResponses->pretendTextTranslateResponse());
+		$translator->method('rawResults')->willReturn($this->mockResponses->pretendTextTranslateRaw());
+		$this->assertEquals('Lorem ipsum', $translator->textTranslate('Lorem ipsum')->getTranslation());
 	}
 
 	/**
