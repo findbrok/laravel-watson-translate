@@ -242,7 +242,7 @@ abstract class AbstractTranslator
 	public function send($options = [])
 	{
 		//Send request with client and return response
-		$this->response = $this->client->send($this->request, collect($this->getAuth())->merge($this->getHeaders())->merge($options)->all());
+		$this->response = $this->getClient()->send($this->request, collect($this->getAuth())->merge($this->getHeaders())->merge($options)->all());
         //Add results to class
         $this->results = $this->response->getBody()->getContents();
 		//return the translator

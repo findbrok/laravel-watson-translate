@@ -70,20 +70,31 @@ class MockResponses
      *
      * @return GuzzleHttp\Psr7\Response
      */
-    public function pretendBulkTranslate()
+    public function pretendBulkTranslateResponse()
     {
         //Build a new successful response for bulk translate
         return new Response(202, [
             'Content-Type' => 'application/json'
         ], collect([
             'translations'      => [
-                ['translation' => $this->faker->sentence(rand(6, 10))],
-                ['translation' => $this->faker->sentence(rand(6, 10))],
+                ['translation' => 'Lorem ipsum'],
+                ['translation' => 'Lorem nam dolor'],
             ],
             'word_count'        => $this->faker->numberBetween(10, 100),
             'character_count'   => $this->faker->numberBetween(10, 100),
         ])->toJson());
     }
+
+	/**
+	 * Mock a raw json results for Bulk translate
+	 *
+	 * @return string
+	 */
+	public function pretendBulkTranslateRaw()
+	{
+		//Return content of pretended response
+		return $this->pretendBulkTranslateResponse()->getBody()->getContents();
+	}
 
     /**
      * Mock a response list languages

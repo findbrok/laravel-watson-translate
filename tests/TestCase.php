@@ -18,6 +18,19 @@ class TestCase extends TestBenchTestCase
 		$this->translator = app()->make('FindBrok\WatsonTranslate\Contracts\TranslatorInterface');
 		//Create mock responses
 		$this->mockResponses = new MockResponses;
+		//Translator Class namespace
+		$this->translatorClass = 'FindBrok\WatsonTranslate\Translator';
+	}
+
+	/**
+	 * Get package providers.
+	 *
+	 * @param \Illuminate\Foundation\Application $app
+	 * @return array
+	 */
+	protected function getPackageProviders($app)
+	{
+		return ['FindBrok\WatsonTranslate\WatsonTranslateServiceProvider'];
 	}
 
 	/**
@@ -42,26 +55,81 @@ class TestCase extends TestBenchTestCase
 	}
 
 	/**
-	 * Test text translate with getTranslation method returns string
+	 * Test textTranslate with getTranslation method returns string
 	 */
-	public function testTextTranslate_GetTranslation_ReturnString()
+	public function testTextTranslate_WithGetTranslation_ReturnString()
 	{
-		$translator = $this->getMock('FindBrok\WatsonTranslate\Translator', ['request', 'send', 'getResponse', 'rawResults']);
-		$translator->method('request')->willReturnSelf();
-		$translator->method('send')->willReturnSelf();
-		$translator->method('getResponse')->willReturn($this->mockResponses->pretendTextTranslateResponse());
-		$translator->method('rawResults')->willReturn($this->mockResponses->pretendTextTranslateRaw());
+		$client = $this->getMockBuilder('GuzzleHttp\Client')->disableOriginalConstructor()->getMock();
+		$client->method('send')->willReturn($this->mockResponses->pretendTextTranslateResponse());
+
+		$translator = $this->getMock($this->translatorClass, ['getClient']);
+		$translator->method('getClient')->willReturn($client);
+
 		$this->assertEquals('Lorem ipsum', $translator->textTranslate('Lorem ipsum')->getTranslation());
 	}
 
 	/**
-	 * Get package providers.
-	 *
-	 * @param \Illuminate\Foundation\Application $app
-	 * @return array
+	 * Test  the textTranslate with rawResults method returns json
 	 */
-	protected function getPackageProviders($app)
+	public function testTextTranslate_WithRawResults_ReturnJson()
 	{
-		return ['FindBrok\WatsonTranslate\WatsonTranslateServiceProvider'];
+		$client = $this->getMockBuilder('GuzzleHttp\Client')->disableOriginalConstructor()->getMock();
+		$client->method('send')->willReturn($this->mockResponses->pretendTextTranslateResponse());
+
+		$translator = $this->getMock($this->translatorClass, ['getClient']);
+		$translator->method('getClient')->willReturn($client);
+
+		$this->assertJsonStringEqualsJsonString(
+			$this->mockResponses->pretendTextTranslateRaw(),
+			$translator->textTranslate('Lorem ipsum')->rawResults()
+		);
+	}
+
+	/**
+	 * Test textTranslate throws \GuzzleHttp\Exception\ClientException with getTranslation returns null
+	 *
+	 * @expectedException
+	 */
+	public function testTextTranslate_WithGetTranslation_ThrowsClientException_ReturnsNull()
+	{
+		$translator = $this->getMock($this->translatorClass, ['send']);
+		$translator->method('send')->willThrowException(
+			Mockery::mock('GuzzleHttp\Exception\ClientException')
+				->shouldReceive(['getMessage', 'getCode'])
+				->andReturn(['Bad request', 400])
+				->getMock()
+		);
+		$this->assertNull($translator->textTranslate('lorem ipsum')->getTranslation());
+	}
+
+	/**
+	 * Test the bulkTranslate method with getTranslation method returns string
+	 */
+	public function testBulkTranslate_WithGetTranslation_ReturnArray()
+	{
+		$client = $this->getMockBuilder('GuzzleHttp\Client')->disableOriginalConstructor()->getMock();
+		$client->method('send')->willReturn($this->mockResponses->pretendBulkTranslateResponse());
+
+		$translator = $this->getMock($this->translatorClass, ['getClient']);
+		$translator->method('getClient')->willReturn($client);
+
+		$this->assertSame(['Lorem ipsum', 'Lorem nam dolor'], $translator->bulkTranslate(['lorem', 'nam'])->getTranslation());
+	}
+
+	/**
+	 * Test the bulkTranslate method throws \GuzzleHttp\Exception\ClientException with getTranslation method returns null
+	 *
+	 * @expectedException
+	 */
+	public function testBulkTranslate_WithGetTranslation_ThrowsClientException_ReturnsNull()
+	{
+		$translator = $this->getMock($this->translatorClass, ['send']);
+		$translator->method('send')->willThrowException(
+			Mockery::mock('GuzzleHttp\Exception\ClientException')
+				->shouldReceive(['getMessage', 'getCode'])
+				->andReturn(['Bad request', 400])
+				->getMock()
+		);
+		$this->assertNull($translator->bulkTranslate(['lorem', 'nam'])->getTranslation());
 	}
 }
