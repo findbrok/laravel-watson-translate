@@ -20,6 +20,8 @@ class TestCase extends TestBenchTestCase
 		$this->mockResponses = new MockResponses;
 		//Translator Class namespace
 		$this->translatorClass = 'FindBrok\WatsonTranslate\Translator';
+		//Create the mock client
+		$this->client = $this->getMockBuilder('GuzzleHttp\Client')->disableOriginalConstructor()->getMock();
 	}
 
 	/**
@@ -31,6 +33,22 @@ class TestCase extends TestBenchTestCase
 	protected function getPackageProviders($app)
 	{
 		return ['FindBrok\WatsonTranslate\WatsonTranslateServiceProvider'];
+	}
+
+	/**
+	 * Set response as a result of textTranslate
+	 */
+	public function fakeResponseForTextTranslate()
+	{
+		$this->client->method('send')->willReturn($this->mockResponses->pretendTextTranslateResponse());
+	}
+
+	/**
+	 * Set response as a result of bulkTranslate
+	 */
+	public function fakeResponseForBulkTranslate()
+	{
+		$this->client->method('send')->willReturn($this->mockResponses->pretendBulkTranslateResponse());
 	}
 
 	/**
@@ -59,13 +77,15 @@ class TestCase extends TestBenchTestCase
 	 */
 	public function testTextTranslate_WithGetTranslation_ReturnString()
 	{
-		$client = $this->getMockBuilder('GuzzleHttp\Client')->disableOriginalConstructor()->getMock();
-		$client->method('send')->willReturn($this->mockResponses->pretendTextTranslateResponse());
+		$this->fakeResponseForTextTranslate();
 
 		$translator = $this->getMock($this->translatorClass, ['getClient']);
-		$translator->method('getClient')->willReturn($client);
+		$translator->method('getClient')->willReturn($this->client);
 
-		$this->assertEquals('Lorem ipsum', $translator->textTranslate('Lorem ipsum')->getTranslation());
+		$this->assertEquals(
+			'Lorem ipsum',
+			$translator->textTranslate('Lorem ipsum')->getTranslation()
+		);
 	}
 
 	/**
@@ -73,15 +93,46 @@ class TestCase extends TestBenchTestCase
 	 */
 	public function testTextTranslate_WithRawResults_ReturnJson()
 	{
-		$client = $this->getMockBuilder('GuzzleHttp\Client')->disableOriginalConstructor()->getMock();
-		$client->method('send')->willReturn($this->mockResponses->pretendTextTranslateResponse());
+		$this->fakeResponseForTextTranslate();
 
 		$translator = $this->getMock($this->translatorClass, ['getClient']);
-		$translator->method('getClient')->willReturn($client);
+		$translator->method('getClient')->willReturn($this->client);
 
 		$this->assertJsonStringEqualsJsonString(
 			$this->mockResponses->pretendTextTranslateRaw(),
 			$translator->textTranslate('Lorem ipsum')->rawResults()
+		);
+	}
+
+	/**
+	 * Test the textTranslate with arrayResults method returns array
+	 */
+	public function testTextTranslate_WithArrayResults_ReturnArray()
+	{
+		$this->fakeResponseForTextTranslate();
+
+		$translator = $this->getMock($this->translatorClass, ['getClient']);
+		$translator->method('getClient')->willReturn($this->client);
+
+		$this->assertEquals(
+			json_decode($this->mockResponses->pretendTextTranslateRaw(), true),
+			$translator->textTranslate('Lorem ipsum')->arrayResults()
+		);
+	}
+
+	/**
+	 * Test textTranslate with collectResults method returns collection
+	 */
+	public function testTextTranslate_WithCollectionResults_ReturnCollection()
+	{
+		$this->fakeResponseForTextTranslate();
+
+		$translator = $this->getMock($this->translatorClass, ['getClient']);
+		$translator->method('getClient')->willReturn($this->client);
+
+		$this->assertEquals(
+			collect(json_decode($this->mockResponses->pretendTextTranslateRaw(), true)),
+			$translator->textTranslate('Lorem ipsum')->collectResults()
 		);
 	}
 
@@ -107,13 +158,63 @@ class TestCase extends TestBenchTestCase
 	 */
 	public function testBulkTranslate_WithGetTranslation_ReturnArray()
 	{
-		$client = $this->getMockBuilder('GuzzleHttp\Client')->disableOriginalConstructor()->getMock();
-		$client->method('send')->willReturn($this->mockResponses->pretendBulkTranslateResponse());
+		$this->fakeResponseForBulkTranslate();
 
 		$translator = $this->getMock($this->translatorClass, ['getClient']);
-		$translator->method('getClient')->willReturn($client);
+		$translator->method('getClient')->willReturn($this->client);
 
-		$this->assertSame(['Lorem ipsum', 'Lorem nam dolor'], $translator->bulkTranslate(['lorem', 'nam'])->getTranslation());
+		$this->assertEquals(
+			['Lorem ipsum', 'Lorem nam dolor'],
+			$translator->bulkTranslate(['lorem', 'nam'])->getTranslation()
+		);
+	}
+
+	/**
+	 * Test the bulkTranslate method with rawResults method returns json
+	 */
+	public function testBulkTranslate_WithRawResults_ReturnJson()
+	{
+		$this->fakeResponseForBulkTranslate();
+
+		$translator = $this->getMock($this->translatorClass, ['getClient']);
+		$translator->method('getClient')->willReturn($this->client);
+
+		$this->assertJsonStringEqualsJsonString(
+			$this->mockResponses->pretendBulkTranslateRaw(),
+			$translator->bulkTranslate(['lorem', 'nam'])->rawResults()
+		);
+	}
+
+	/**
+	 * Test the bulkTranslate method with arrayResults method returns array
+	 */
+	public function testBulkTranslate_WithArrayResults_ReturnArray()
+	{
+		$this->fakeResponseForBulkTranslate();
+
+		$translator = $this->getMock($this->translatorClass, ['getClient']);
+		$translator->method('getClient')->willReturn($this->client);
+
+		$this->assertEquals(
+			json_decode($this->mockResponses->pretendBulkTranslateRaw(), true),
+			$translator->bulkTranslate(['lorem', 'nam'])->arrayResults()
+		);
+	}
+
+	/**
+	 * Test the bulkTranslate method with collectResults method returns collection
+	 */
+	public function testBulkTranslate_WithCollectionResults_ReturnCollection()
+	{
+		$this->fakeResponseForBulkTranslate();
+
+		$translator = $this->getMock($this->translatorClass, ['getClient']);
+		$translator->method('getClient')->willReturn($this->client);
+
+		$this->assertEquals(
+			collect(json_decode($this->mockResponses->pretendBulkTranslateRaw(), true)),
+			$translator->bulkTranslate(['lorem', 'nam'])->collectResults()
+		);
 	}
 
 	/**

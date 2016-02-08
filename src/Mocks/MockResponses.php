@@ -80,8 +80,8 @@ class MockResponses
                 ['translation' => 'Lorem ipsum'],
                 ['translation' => 'Lorem nam dolor'],
             ],
-            'word_count'        => $this->faker->numberBetween(10, 100),
-            'character_count'   => $this->faker->numberBetween(10, 100),
+            'word_count'        => 100,
+            'character_count'   => 200,
         ])->toJson());
     }
 
