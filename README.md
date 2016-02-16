@@ -1,5 +1,10 @@
 # Laravel 5 IBM Watson Translate
 
+[![Latest Stable Version](https://poser.pugx.org/findbrok/laravel-watson-translate/v/stable)](https://packagist.org/packages/findbrok/laravel-watson-translate) 
+[![Total Downloads](https://poser.pugx.org/findbrok/laravel-watson-translate/downloads)](https://packagist.org/packages/findbrok/laravel-watson-translate) 
+[![Latest Unstable Version](https://poser.pugx.org/findbrok/laravel-watson-translate/v/unstable)](https://packagist.org/packages/findbrok/laravel-watson-translate) 
+[![License](https://poser.pugx.org/findbrok/laravel-watson-translate/license)](https://packagist.org/packages/findbrok/laravel-watson-translate)
+
 This package provides a simple api to perform translations using the IBM Watson Language Translation service. 
 
 To get a better understanding of how this package works read the documentation for Watson Language Translation service first.
