@@ -50,14 +50,14 @@ trait ResultsCollection
     public function getTranslation($asCollection = false)
     {
         //We do not have a response
-        if($this->getResponse() == null || $this->collectResults()->get('translations') == null) {
+        if ($this->getResponse() == null || $this->collectResults()->get('translations') == null) {
             //We return null only
             return null;
         }
         //We have more than one translation
-        if(count($this->collectResults()->get('translations')) > 1) {
+        if (count($this->collectResults()->get('translations')) > 1) {
             //Get only translations
-            $translations = collect($this->collectResults()->get('translations'))->transform(function($item) {
+            $translations = collect($this->collectResults()->get('translations'))->transform(function ($item) {
                 return $item['translation'];
             });
             //Return the translations as array or collection
@@ -77,22 +77,22 @@ trait ResultsCollection
     public function languagesNames($asCollection = false)
     {
         //We do not have a response
-        if($this->getResponse() == null || $this->collectResults()->get('languages') == null) {
+        if ($this->getResponse() == null || $this->collectResults()->get('languages') == null) {
             //We return null only
             return null;
         }
         //Get languages name only
-        $languagesName = collect($this->collectResults()->get('languages'))->transform(function($item) {
+        $languagesName = collect($this->collectResults()->get('languages'))->transform(function ($item) {
             return isset($item['name'])?$item['name']:null;
-        })->reject(function($item) {
+        })->reject(function ($item) {
             return $item == null;
         });
         //No language
-        if($languagesName->count() == 0) {
+        if ($languagesName->count() == 0) {
             //we return null
             return null;
         }
-        //return langauages as array or collection
+        //return languages as array or collection
         return ($asCollection)?$languagesName:$languagesName->all();
     }
 
@@ -105,22 +105,23 @@ trait ResultsCollection
     public function languagesCodes($asCollection = false)
     {
         //We do not have a response
-        if($this->getResponse() == null || $this->collectResults()->get('languages') == null) {
+        if ($this->getResponse() == null || $this->collectResults()->get('languages') == null) {
             //We return null only
             return null;
         }
         //Get languages codes only
-        $languagesCodes = collect($this->collectResults()->get('languages'))->transform(function($item) {
+        $languagesCodes = collect($this->collectResults()->get('languages'))->transform(function ($item) {
             return isset($item['language'])?$item['language']:null;
-        })->reject(function($item) {
+        })->reject(function ($item) {
             return $item == null;
-        });;
+        });
+        ;
         //No language
-        if($languagesCodes->count() == 0) {
+        if ($languagesCodes->count() == 0) {
             //we return null
             return null;
         }
-        //return langauages as array or collection
+        //return languages as array or collection
         return ($asCollection)?$languagesCodes:$languagesCodes->all();
     }
 
@@ -133,12 +134,12 @@ trait ResultsCollection
     public function bestGuess($asCollection = false)
     {
         //We do not have a response
-        if($this->getResponse() == null || $this->collectResults()->get('languages') == null) {
+        if ($this->getResponse() == null || $this->collectResults()->get('languages') == null) {
             //We return null only
             return null;
         }
         //Get the language with the highest score
-        $highestScore = collect($this->collectResults()->get('languages'))->reduce(function($results, $item) {
+        $highestScore = collect($this->collectResults()->get('languages'))->reduce(function ($results, $item) {
             //return item with highest score
             return ($item['confidence'] >= $results['confidence'])?$item:$results;
         }, ['confidence' => 0]);

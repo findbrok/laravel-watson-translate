@@ -1,13 +1,8 @@
 <?php
 
-namespace FindBrok\WatsonTranslate\Mocks;
+namespace FindBrok\WatsonTranslate\Tests\Mocks;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Exception\RequestException;
 use Faker\Factory as Faker;
 
 /**
@@ -34,36 +29,36 @@ class MockResponses
         $this->faker = Faker::create();
     }
 
-	/**
-	 * Mock a response for text translate function
-	 *
-	 * @return GuzzleHttp\Psr7\Response
-	 */
-	public function pretendTextTranslateResponse()
-	{
+    /**
+     * Mock a response for text translate function
+     *
+     * @return GuzzleHttp\Psr7\Response
+     */
+    public function pretendTextTranslateResponse()
+    {
         //New sentence
         $sentence = 'Lorem ipsum';
-		//Build a new successful response for text translate
-		return new Response(202, [
-			'Content-Type' => 'application/json'
-		], collect([
-			'translations'      => [
-				['translation' => $sentence]
-			],
-			'word_count'        => count(explode(' ', $sentence)),
-			'character_count'   => strlen($sentence),
-		])->toJson());
-	}
+        //Build a new successful response for text translate
+        return new Response(202, [
+            'Content-Type' => 'application/json'
+        ], collect([
+            'translations'      => [
+                ['translation' => $sentence]
+            ],
+            'word_count'        => count(explode(' ', $sentence)),
+            'character_count'   => strlen($sentence),
+        ])->toJson());
+    }
 
-	/**
-	 * Mock a raw json results for text translate function
-	 *
-	 * @return string
-	 */
-	public function pretendTextTranslateRaw()
-	{
-		return $this->pretendTextTranslateResponse()->getBody()->getContents();
-	}
+    /**
+     * Mock a raw json results for text translate function
+     *
+     * @return string
+     */
+    public function pretendTextTranslateRaw()
+    {
+        return $this->pretendTextTranslateResponse()->getBody()->getContents();
+    }
 
     /**
      * Mock a response for the bulk translate function
@@ -85,16 +80,16 @@ class MockResponses
         ])->toJson());
     }
 
-	/**
-	 * Mock a raw json results for Bulk translate
-	 *
-	 * @return string
-	 */
-	public function pretendBulkTranslateRaw()
-	{
-		//Return content of pretended response
-		return $this->pretendBulkTranslateResponse()->getBody()->getContents();
-	}
+    /**
+     * Mock a raw json results for Bulk translate
+     *
+     * @return string
+     */
+    public function pretendBulkTranslateRaw()
+    {
+        //Return content of pretended response
+        return $this->pretendBulkTranslateResponse()->getBody()->getContents();
+    }
 
     /**
      * Mock a response list languages

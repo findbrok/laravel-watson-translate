@@ -25,7 +25,8 @@
             "tests/TestCase.php"
         ],
         "psr-4": {
-            "FindBrok\\WatsonTranslate\\": "src/"
+            "FindBrok\\WatsonTranslate\\": "src/",
+            "FindBrok\\WatsonTranslate\\Tests\\": "tests/"
         }
     }
 }
