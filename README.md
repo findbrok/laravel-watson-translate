@@ -1,5 +1,6 @@
 # Laravel 5 IBM Watson Translate
 
+[![Build Status](https://travis-ci.org/findbrok/laravel-watson-translate.svg?branch=master)](https://travis-ci.org/findbrok/laravel-watson-translate)
 [![Latest Stable Version](https://poser.pugx.org/findbrok/laravel-watson-translate/v/stable)](https://packagist.org/packages/findbrok/laravel-watson-translate) 
 [![Total Downloads](https://poser.pugx.org/findbrok/laravel-watson-translate/downloads)](https://packagist.org/packages/findbrok/laravel-watson-translate) 
 [![Latest Unstable Version](https://poser.pugx.org/findbrok/laravel-watson-translate/v/unstable)](https://packagist.org/packages/findbrok/laravel-watson-translate) 
