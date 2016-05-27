@@ -16,13 +16,6 @@ use Illuminate\Support\ServiceProvider;
 class WatsonTranslateServiceProvider extends ServiceProvider
 {
     /**
-     * Define the config path we are using for the Package
-     *
-     * @var string
-     */
-    protected $configPath = __DIR__.'/config/watson-translate.php';
-
-    /**
      * Define all Facades here
      *
      * @var array
@@ -40,7 +33,7 @@ class WatsonTranslateServiceProvider extends ServiceProvider
     {
         //Publish config file
         $this->publishes([
-            $this->configPath => config_path('watson-translate.php')
+            __DIR__.'/config/watson-translate.php' => config_path('watson-translate.php')
         ], 'config');
     }
 
@@ -52,7 +45,7 @@ class WatsonTranslateServiceProvider extends ServiceProvider
     public function register()
     {
         //Merge config file
-        $this->mergeConfigFrom($this->configPath, 'watson-translate');
+        $this->mergeConfigFrom(__DIR__.'/config/watson-translate.php', 'watson-translate');
         //Register Bindings
         $this->registerBinding();
         //Add Facades to the Translator service
