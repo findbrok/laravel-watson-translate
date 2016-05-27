@@ -9,25 +9,23 @@ namespace FindBrok\WatsonTranslate\Presenters;
 trait ResultsCollection
 {
     /**
-     * Returns the raw results from the request
+     * Checks and see if we have some translations in the results
      *
-     * @return string
+     * @return bool
      */
-    public function rawResults()
+    public function hasTranslations()
     {
-        //Return raw results
-        return $this->results;
+        return count($this->collectResults()->get('translations')) > 0;
     }
 
     /**
-     * Returns the results of the response as a collection
+     * Checks and see if we have multiple translations in the results
      *
-     * @return \Illuminate\Support\Collection|null
+     * @return bool
      */
-    public function collectResults()
+    public function hasMoreThanOneTranslation()
     {
-        //Return response as collection or null if not set
-        return ($this->arrayResults() != null)?collect($this->arrayResults()):null;
+        return count($this->collectResults()->get('translations')) > 1;
     }
 
     /**
@@ -37,113 +35,112 @@ trait ResultsCollection
      */
     public function arrayResults()
     {
-        //return response as array or null
-        return ($this->rawResults() != null)?json_decode($this->rawResults(), true):null;
+        return json_decode($this->getResults(), true);
+    }
+
+    /**
+     * Returns the results of the response as a collection
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function collectResults()
+    {
+        return collect($this->arrayResults());
     }
 
     /**
      * Returns only the translations from results
      *
-     * @param bool|false $asCollection
+     * @param bool $asCollection
      * @return mixed
      */
     public function getTranslation($asCollection = false)
     {
-        //We do not have a response
-        if ($this->getResponse() == null || $this->collectResults()->get('translations') == null) {
-            //We return null only
-            return null;
-        }
-        //We have more than one translation
-        if (count($this->collectResults()->get('translations')) > 1) {
-            //Get only translations
-            $translations = collect($this->collectResults()->get('translations'))->transform(function ($item) {
-                return $item['translation'];
-            });
-            //Return the translations as array or collection
-            return ($asCollection)?$translations:$translations->all();
-        } else {
+        //We have some translations
+        if ($this->hasTranslations()) {
+            //More than one
+            if ($this->hasMoreThanOneTranslation()) {
+                //Get only translations
+                $translations = collect($this->collectResults()->get('translations'))->transform(function ($item) {
+                    return $item['translation'];
+                });
+                //Return the translations as array or collection
+                return $asCollection ? $translations : $translations->all();
+            }
             //Return the single translation as collection or string
-            return ($asCollection)?collect($this->collectResults()->get('translations')):collect(collect($this->collectResults()->get('translations'))->first())->get('translation');
+            return $asCollection ?
+                collect($this->collectResults()->get('translations')) :
+                collect(collect($this->collectResults()->get('translations'))->first())->get('translation');
         }
+        //Nothing to return
+        return null;
     }
 
     /**
      * Return languages names only
      *
      * @param bool $asCollection
-     * @return mixed
+     * @return array|\Illuminate\Support\Collection
      */
     public function languagesNames($asCollection = false)
     {
-        //We do not have a response
-        if ($this->getResponse() == null || $this->collectResults()->get('languages') == null) {
-            //We return null only
-            return null;
-        }
         //Get languages name only
         $languagesName = collect($this->collectResults()->get('languages'))->transform(function ($item) {
-            return isset($item['name'])?$item['name']:null;
+            return isset($item['name']) ? $item['name'] : null;
         })->reject(function ($item) {
             return $item == null;
         });
+
         //No language
         if ($languagesName->count() == 0) {
             //we return null
             return null;
         }
+
         //return languages as array or collection
-        return ($asCollection)?$languagesName:$languagesName->all();
+        return $asCollection ? $languagesName : $languagesName->all();
     }
 
     /**
      * Return languages codes only
      *
      * @param bool $asCollection
-     * @return mixed
+     * @return array|\Illuminate\Support\Collection
      */
     public function languagesCodes($asCollection = false)
     {
-        //We do not have a response
-        if ($this->getResponse() == null || $this->collectResults()->get('languages') == null) {
-            //We return null only
-            return null;
-        }
         //Get languages codes only
         $languagesCodes = collect($this->collectResults()->get('languages'))->transform(function ($item) {
-            return isset($item['language'])?$item['language']:null;
+            return isset($item['language']) ? $item['language'] : null;
         })->reject(function ($item) {
             return $item == null;
         });
-        ;
+
         //No language
         if ($languagesCodes->count() == 0) {
             //we return null
             return null;
         }
+
         //return languages as array or collection
-        return ($asCollection)?$languagesCodes:$languagesCodes->all();
+        return $asCollection ? $languagesCodes : $languagesCodes->all();
     }
 
     /**
      * Get the language with the highest level of
      * confidence
      *
-     * @return array|null|\Illuminate\Support\Collection
+     * @return array|\Illuminate\Support\Collection
      */
     public function bestGuess($asCollection = false)
     {
-        //We do not have a response
-        if ($this->getResponse() == null || $this->collectResults()->get('languages') == null) {
-            //We return null only
-            return null;
-        }
         //Get the language with the highest score
         $highestScore = collect($this->collectResults()->get('languages'))->reduce(function ($results, $item) {
             //return item with highest score
-            return ($item['confidence'] >= $results['confidence'])?$item:$results;
+            return ($item['confidence'] >= $results['confidence']) ? $item : $results;
         }, ['confidence' => 0]);
+
         //Return array or collection
-        return ($asCollection)?collect($highestScore):$highestScore;
+        return $asCollection ? collect($highestScore) : $highestScore;
     }
 }

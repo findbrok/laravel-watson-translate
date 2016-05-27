@@ -2,8 +2,6 @@
 
 namespace FindBrok\WatsonTranslate;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request;
 use FindBrok\WatsonTranslate\Presenters\ResultsCollection;
 
 /**
@@ -18,42 +16,7 @@ abstract class AbstractTranslator
     use ResultsCollection;
 
     /**
-     * Api end point of the translation service
-     *
-     * @var string
-     */
-    protected $endPoint;
-
-    /**
-     * Guzzle http client for performing API request
-     *
-     * @var \GuzzleHttp\Client
-     */
-    protected $client;
-
-    /**
-     * The request object
-     *
-     * @var \GuzzleHttp\Psr7\Request
-     */
-    protected $request;
-
-    /**
-     * The response from API
-     *
-     * @var \GuzzleHttp\Psr7\Response
-     */
-    protected $response = null;
-
-    /**
-     * Error message if any
-     *
-     * @var string
-     */
-    protected $error = null;
-
-    /**
-     * The results from the request
+     * The results from API
      *
      * @var string
      */
@@ -81,13 +44,13 @@ abstract class AbstractTranslator
     protected $modelId = null;
 
     /**
-     * Create a new instance of the AbstractTranslator
+     * Request Headers
+     *
+     * @var array
      */
-    public function __construct()
-    {
-        //Set the client
-        $this->setClient();
-    }
+    protected $headers = [
+        'Accept' => 'application/json'
+    ];
 
     /**
      * Getting attributes
@@ -107,53 +70,17 @@ abstract class AbstractTranslator
     }
 
     /**
-     * Creates the http client
+     * Append Headers to request
      *
-     * @return void
+     * @param array $headers
+     * @return self
      */
-    private function setClient()
+    public function appendHeaders($headers = [])
     {
-        //Set the Api end point
-        $this->endPoint = config('watson-translate.api_endpoint');
-        //Create client using API endpoint sets it the th class variable
-        $this->client = new Client([
-            'base_uri'  => $this->endPoint,
-        ]);
-    }
-
-    /**
-     * Return the Http client instance
-     *
-     * @return \GuzzleHttp\Client
-     */
-    public function getClient()
-    {
-        //Return client
-        return $this->client;
-    }
-
-    /**
-     * Return the response from API
-     *
-     * @return \GuzzleHttp\Psr7\Response
-     */
-    public function getResponse()
-    {
-        //Return response
-        return $this->response;
-    }
-
-    /**
-     * Return the authorization for making request
-     *
-     * @return array
-     */
-    private function getAuth()
-    {
-        //Return access authorization
-        return [
-            'auth' => [config('watson-translate.service_credentials.username'), config('watson-translate.service_credentials.password')]
-        ];
+        //Append headers
+        $this->headers = collect($this->headers)->merge($headers)->all();
+        //Return calling object
+        return $this;
     }
 
     /**
@@ -164,12 +91,39 @@ abstract class AbstractTranslator
     private function getHeaders()
     {
         //Return headers
-        return [
-            'headers' => [
-                'Accept' => 'application/json',
-                'X-Watson-Learning-Opt-Out' => config('watson-translate.x_watson_learning_opt_out')
-            ]
-        ];
+        return collect($this->headers)->merge([
+            'X-Watson-Learning-Opt-Out' => config('watson-translate.x_watson_learning_opt_out')
+        ])->all();
+    }
+
+    /**
+     * Make a Bridge to Send API Request to Watson
+     *
+     * @return \FindBrok\WatsonBridge\Bridge
+     */
+    public function makeBridge()
+    {
+        return app()->make('WatsonTranslateBridge')->appendHeaders($this->getHeaders());
+    }
+
+    /**
+     * Return the results from API
+     *
+     * @return string|null
+     */
+    public function getResults()
+    {
+        return $this->results;
+    }
+
+    /**
+     * Return Model id to Use
+     *
+     * @return string|null
+     */
+    public function getModelId()
+    {
+        return $this->modelId;
     }
 
     /**
@@ -212,39 +166,9 @@ abstract class AbstractTranslator
     public function usingModel($modelName = '')
     {
         //Set the model id
-        $this->modelId = ($modelName == '')?config('watson-translate.models.default'):config('watson-translate.models.'.$modelName);
-        //return the translator
-        return $this;
-    }
-
-    /**
-     * Build a request
-     *
-     * @param string $method
-     * @param string $uri
-     * @param array $options
-     * @return self
-     */
-    public function request($method = 'GET', $uri = null, $options = [])
-    {
-        //Build the request
-        $this->request = new Request($method, $uri, $options);
-        //return the translator
-        return $this;
-    }
-
-    /**
-     * Send API request to Watson service
-     *
-     * @param array $options
-     * @return self
-     */
-    public function send($options = [])
-    {
-        //Send request with client and return response
-        $this->response = $this->getClient()->send($this->request, collect($this->getAuth())->merge($this->getHeaders())->merge($options)->all());
-        //Add results to class
-        $this->results = $this->response->getBody()->getContents();
+        $this->modelId = ($modelName == '') ?
+                         config('watson-translate.models.default') :
+                         config('watson-translate.models.'.$modelName);
         //return the translator
         return $this;
     }

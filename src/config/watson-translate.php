@@ -7,7 +7,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | Set these values to your service own service credentials that you
-    | obtained when registering for Watson Language translation service.
+    | obtained when registering for Watson Language translation
+    | service.
     |
     */
     'service_credentials' => [
@@ -30,8 +31,9 @@ return [
     | X-Watson-Learning-Opt-Out
     |--------------------------------------------------------------------------
     |
-    | By default, Watson collects data from all requests and uses the data to improve the service.
-    | If you do not want to share your data, set this value to true.
+    | By default, Watson collects data from all requests and uses the
+    | data to improve the service. If you do not want to share
+    | your data, set this value to true.
     |
     */
     'x_watson_learning_opt_out' => false,
@@ -54,8 +56,9 @@ return [
     |--------------------------------------------------------------------------
     |
     | Here you may specify a name to give to each Watson Language translation
-    | Service models to be used. You will use these model names instead of their
-    | id when performing translations. Feel free to add as many models as you want
+    | Service models to be used. You will use these model names
+    | instead of their id when performing translations.
+    | Feel free to add as many models as you want
     | and give any name that you see fit.
     |
     */

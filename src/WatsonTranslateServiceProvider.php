@@ -2,15 +2,35 @@
 
 namespace FindBrok\WatsonTranslate;
 
-use Illuminate\Support\ServiceProvider;
+use FindBrok\WatsonBridge\Bridge;
+use FindBrok\WatsonTranslate\Contracts\TranslatorInterface;
+use FindBrok\WatsonTranslate\Facades\TranslatorFacade;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Support\ServiceProvider;
 
 /**
  * Class WatsonTranslateServiceProvider
+ *
  * @package FindBrok\WatsonTranslate
  */
 class WatsonTranslateServiceProvider extends ServiceProvider
 {
+    /**
+     * Define the config path we are using for the Package
+     *
+     * @var string
+     */
+    protected $configPath = __DIR__.'/config/watson-translate.php';
+
+    /**
+     * Define all Facades here
+     *
+     * @var array
+     */
+    protected $facades = [
+        'WatsonTranslate' => TranslatorFacade::class
+    ];
+
     /**
      * Bootstrap the application services.
      *
@@ -20,8 +40,8 @@ class WatsonTranslateServiceProvider extends ServiceProvider
     {
         //Publish config file
         $this->publishes([
-            __DIR__.'/config/watson-translate.php' => config_path('watson-translate.php')
-        ]);
+            $this->configPath => config_path('watson-translate.php')
+        ], 'config');
     }
 
     /**
@@ -32,18 +52,50 @@ class WatsonTranslateServiceProvider extends ServiceProvider
     public function register()
     {
         //Merge config file
-        $this->mergeConfigFrom(
-            __DIR__.'/config/watson-translate.php', 'watson-translate'
-        );
+        $this->mergeConfigFrom($this->configPath, 'watson-translate');
+        //Register Bindings
+        $this->registerBinding();
+        //Add Facades to the Translator service
+        $this->registerFacades();
+    }
 
+    /**
+     * Register all bindings in the IOC
+     *
+     * @return void
+     */
+    public function registerBinding()
+    {
         //Bind Implementation of the Translator interface
-        $this->app->bind('FindBrok\WatsonTranslate\Contracts\TranslatorInterface', config('watson-translate.translator_implementation'));
-        //Add Facade to the Translator service
-        $this->app->booting(function () {
-            //Get loader instance
-            $loader = AliasLoader::getInstance();
-            //Add alias
-            $loader->alias('WatsonTranslate', 'FindBrok\WatsonTranslate\Facades\TranslatorFacade');
+        $this->app->bind(TranslatorInterface::class, config('watson-translate.translator_implementation'));
+
+        //Bind WatsonBridge for WatsonTranslate that we depend on
+        $this->app->bind('WatsonTranslateBridge', function () {
+            //Return bridge
+            return new Bridge(
+                config('watson-translate.service_credentials.username'),
+                config('watson-translate.service_credentials.password'),
+                config('watson-translate.api_endpoint')
+            );
+        });
+    }
+
+    /**
+     * Registers all facades
+     *
+     * @return void
+     */
+    public function registerFacades()
+    {
+        //Register all facades
+        collect($this->facades)->each(function ($facadeClass, $alias) {
+            //Add Facade
+            $this->app->booting(function () use ($alias, $facadeClass) {
+                //Get loader instance
+                $loader = AliasLoader::getInstance();
+                //Add alias
+                $loader->alias($alias, $facadeClass);
+            });
         });
     }
 }

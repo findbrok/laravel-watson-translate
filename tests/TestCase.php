@@ -1,7 +1,7 @@
 <?php
 
-use Orchestra\Testbench\TestCase as TestBenchTestCase;
 use FindBrok\WatsonTranslate\Tests\Mocks\MockResponses;
+use Orchestra\Testbench\TestCase as TestBenchTestCase;
 
 /**
  * Class TestCase
@@ -14,14 +14,17 @@ class TestCase extends TestBenchTestCase
     public function setUp()
     {
         parent::setUp();
-        //Create translator class
-        $this->translator = app()->make('FindBrok\WatsonTranslate\Contracts\TranslatorInterface');
         //Create mock responses
         $this->mockResponses = new MockResponses;
         //Translator Class namespace
         $this->translatorClass = 'FindBrok\WatsonTranslate\Translator';
-        //Create the mock client
-        $this->client = $this->getMockBuilder('GuzzleHttp\Client')->disableOriginalConstructor()->getMock();
+        //Make translator
+        $this->translator = app()->make($this->translatorClass);
+        //Mock Watson Bridge
+        $this->bridge = $this->getMockBuilder('FindBrok\WatsonBridge\Bridge')
+                             ->disableOriginalConstructor()
+                             ->setMethods(['post', 'get'])
+                             ->getMock();
     }
 
     /**
@@ -33,22 +36,6 @@ class TestCase extends TestBenchTestCase
     protected function getPackageProviders($app)
     {
         return ['FindBrok\WatsonTranslate\WatsonTranslateServiceProvider'];
-    }
-
-    /**
-     * Set response as a result of textTranslate
-     */
-    public function fakeResponseForTextTranslate()
-    {
-        $this->client->method('send')->willReturn($this->mockResponses->pretendTextTranslateResponse());
-    }
-
-    /**
-     * Set response as a result of bulkTranslate
-     */
-    public function fakeResponseForBulkTranslate()
-    {
-        $this->client->method('send')->willReturn($this->mockResponses->pretendBulkTranslateResponse());
     }
 
     /**
@@ -77,14 +64,17 @@ class TestCase extends TestBenchTestCase
      */
     public function testTextTranslate_WithGetTranslation_ReturnString()
     {
-        $this->fakeResponseForTextTranslate();
+        //Set return value of post method
+        $this->bridge->method('get')
+            ->withAnyParameters()
+            ->willReturn($this->mockResponses->pretendTextTranslateResponse());
+        //Override Bridge in IOC
+        $this->app->instance('WatsonTranslateBridge', $this->bridge);
 
-        $translator = $this->getMock($this->translatorClass, ['getClient']);
-        $translator->method('getClient')->willReturn($this->client);
-
+        //Fake Watson Bridge
         $this->assertEquals(
             'Lorem ipsum',
-            $translator->textTranslate('Lorem ipsum')->getTranslation()
+            $this->translator->textTranslate('Lorem ipsum')->getTranslation()
         );
     }
 
@@ -93,14 +83,16 @@ class TestCase extends TestBenchTestCase
      */
     public function testTextTranslate_WithRawResults_ReturnJson()
     {
-        $this->fakeResponseForTextTranslate();
-
-        $translator = $this->getMock($this->translatorClass, ['getClient']);
-        $translator->method('getClient')->willReturn($this->client);
+        //Set return value of post method
+        $this->bridge->method('get')
+            ->withAnyParameters()
+            ->willReturn($this->mockResponses->pretendTextTranslateResponse());
+        //Override Bridge in IOC
+        $this->app->instance('WatsonTranslateBridge', $this->bridge);
 
         $this->assertJsonStringEqualsJsonString(
             $this->mockResponses->pretendTextTranslateRaw(),
-            $translator->textTranslate('Lorem ipsum')->rawResults()
+            $this->translator->textTranslate('Lorem ipsum')->getResults()
         );
     }
 
@@ -109,14 +101,16 @@ class TestCase extends TestBenchTestCase
      */
     public function testTextTranslate_WithArrayResults_ReturnArray()
     {
-        $this->fakeResponseForTextTranslate();
-
-        $translator = $this->getMock($this->translatorClass, ['getClient']);
-        $translator->method('getClient')->willReturn($this->client);
+        //Set return value of post method
+        $this->bridge->method('get')
+            ->withAnyParameters()
+            ->willReturn($this->mockResponses->pretendTextTranslateResponse());
+        //Override Bridge in IOC
+        $this->app->instance('WatsonTranslateBridge', $this->bridge);
 
         $this->assertEquals(
             json_decode($this->mockResponses->pretendTextTranslateRaw(), true),
-            $translator->textTranslate('Lorem ipsum')->arrayResults()
+            $this->translator->textTranslate('Lorem ipsum')->arrayResults()
         );
     }
 
@@ -125,32 +119,34 @@ class TestCase extends TestBenchTestCase
      */
     public function testTextTranslate_WithCollectionResults_ReturnCollection()
     {
-        $this->fakeResponseForTextTranslate();
-
-        $translator = $this->getMock($this->translatorClass, ['getClient']);
-        $translator->method('getClient')->willReturn($this->client);
+        //Set return value of post method
+        $this->bridge->method('get')
+            ->withAnyParameters()
+            ->willReturn($this->mockResponses->pretendTextTranslateResponse());
+        //Override Bridge in IOC
+        $this->app->instance('WatsonTranslateBridge', $this->bridge);
 
         $this->assertEquals(
             collect(json_decode($this->mockResponses->pretendTextTranslateRaw(), true)),
-            $translator->textTranslate('Lorem ipsum')->collectResults()
+            $this->translator->textTranslate('Lorem ipsum')->collectResults()
         );
     }
 
     /**
-     * Test textTranslate throws \GuzzleHttp\Exception\ClientException with getTranslation returns null
+     * Test textTranslate throws WatsonBridgeException
      *
-     * @expectedException
+     * @expectedException \FindBrok\WatsonBridge\Exceptions\WatsonBridgeException
      */
     public function testTextTranslate_WithGetTranslation_ThrowsClientException_ReturnsNull()
     {
-        $translator = $this->getMock($this->translatorClass, ['send']);
-        $translator->method('send')->willThrowException(
-            Mockery::mock('GuzzleHttp\Exception\ClientException')
-                ->shouldReceive(['getMessage', 'getCode'])
-                ->andReturn(['Bad request', 400])
-                ->getMock()
-        );
-        $this->assertNull($translator->textTranslate('lorem ipsum')->getTranslation());
+        //Set return value of post method
+        $this->bridge->method('get')
+            ->withAnyParameters()
+            ->will($this->throwException(new \FindBrok\WatsonBridge\Exceptions\WatsonBridgeException('Foo', 400)));
+        //Override Bridge in IOC
+        $this->app->instance('WatsonTranslateBridge', $this->bridge);
+
+        $this->translator->textTranslate('lorem ipsum')->getTranslation();
     }
 
     /**
@@ -158,14 +154,16 @@ class TestCase extends TestBenchTestCase
      */
     public function testBulkTranslate_WithGetTranslation_ReturnArray()
     {
-        $this->fakeResponseForBulkTranslate();
-
-        $translator = $this->getMock($this->translatorClass, ['getClient']);
-        $translator->method('getClient')->willReturn($this->client);
+        //Set return value of post method
+        $this->bridge->method('post')
+            ->withAnyParameters()
+            ->willReturn($this->mockResponses->pretendBulkTranslateResponse());
+        //Override Bridge in IOC
+        $this->app->instance('WatsonTranslateBridge', $this->bridge);
 
         $this->assertEquals(
             ['Lorem ipsum', 'Lorem nam dolor'],
-            $translator->bulkTranslate(['lorem', 'nam'])->getTranslation()
+            $this->translator->bulkTranslate(['lorem', 'nam'])->getTranslation()
         );
     }
 
@@ -174,14 +172,16 @@ class TestCase extends TestBenchTestCase
      */
     public function testBulkTranslate_WithRawResults_ReturnJson()
     {
-        $this->fakeResponseForBulkTranslate();
-
-        $translator = $this->getMock($this->translatorClass, ['getClient']);
-        $translator->method('getClient')->willReturn($this->client);
+        //Set return value of post method
+        $this->bridge->method('post')
+            ->withAnyParameters()
+            ->willReturn($this->mockResponses->pretendBulkTranslateResponse());
+        //Override Bridge in IOC
+        $this->app->instance('WatsonTranslateBridge', $this->bridge);
 
         $this->assertJsonStringEqualsJsonString(
             $this->mockResponses->pretendBulkTranslateRaw(),
-            $translator->bulkTranslate(['lorem', 'nam'])->rawResults()
+            $this->translator->bulkTranslate(['lorem', 'nam'])->getResults()
         );
     }
 
@@ -190,14 +190,16 @@ class TestCase extends TestBenchTestCase
      */
     public function testBulkTranslate_WithArrayResults_ReturnArray()
     {
-        $this->fakeResponseForBulkTranslate();
-
-        $translator = $this->getMock($this->translatorClass, ['getClient']);
-        $translator->method('getClient')->willReturn($this->client);
+        //Set return value of post method
+        $this->bridge->method('post')
+            ->withAnyParameters()
+            ->willReturn($this->mockResponses->pretendBulkTranslateResponse());
+        //Override Bridge in IOC
+        $this->app->instance('WatsonTranslateBridge', $this->bridge);
 
         $this->assertEquals(
             json_decode($this->mockResponses->pretendBulkTranslateRaw(), true),
-            $translator->bulkTranslate(['lorem', 'nam'])->arrayResults()
+            $this->translator->bulkTranslate(['lorem', 'nam'])->arrayResults()
         );
     }
 
@@ -206,31 +208,33 @@ class TestCase extends TestBenchTestCase
      */
     public function testBulkTranslate_WithCollectionResults_ReturnCollection()
     {
-        $this->fakeResponseForBulkTranslate();
-
-        $translator = $this->getMock($this->translatorClass, ['getClient']);
-        $translator->method('getClient')->willReturn($this->client);
+        //Set return value of post method
+        $this->bridge->method('post')
+            ->withAnyParameters()
+            ->willReturn($this->mockResponses->pretendBulkTranslateResponse());
+        //Override Bridge in IOC
+        $this->app->instance('WatsonTranslateBridge', $this->bridge);
 
         $this->assertEquals(
             collect(json_decode($this->mockResponses->pretendBulkTranslateRaw(), true)),
-            $translator->bulkTranslate(['lorem', 'nam'])->collectResults()
+            $this->translator->bulkTranslate(['lorem', 'nam'])->collectResults()
         );
     }
 
     /**
-     * Test the bulkTranslate method throws \GuzzleHttp\Exception\ClientException with getTranslation method returns null
+     * Test the bulkTranslate method throws WatsonBridgeException
      *
-     * @expectedException
+     * @expectedException \FindBrok\WatsonBridge\Exceptions\WatsonBridgeException
      */
     public function testBulkTranslate_WithGetTranslation_ThrowsClientException_ReturnsNull()
     {
-        $translator = $this->getMock($this->translatorClass, ['send']);
-        $translator->method('send')->willThrowException(
-            Mockery::mock('GuzzleHttp\Exception\ClientException')
-                ->shouldReceive(['getMessage', 'getCode'])
-                ->andReturn(['Bad request', 400])
-                ->getMock()
-        );
-        $this->assertNull($translator->bulkTranslate(['lorem', 'nam'])->getTranslation());
+        //Set return value of post method
+        $this->bridge->method('post')
+            ->withAnyParameters()
+            ->will($this->throwException(new \FindBrok\WatsonBridge\Exceptions\WatsonBridgeException('Foo', 400)));
+        //Override Bridge in IOC
+        $this->app->instance('WatsonTranslateBridge', $this->bridge);
+
+        $this->translator->bulkTranslate(['lorem', 'nam'])->getTranslation();
     }
 }

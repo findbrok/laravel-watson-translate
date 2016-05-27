@@ -2,48 +2,34 @@
 
 namespace FindBrok\WatsonTranslate;
 
+use FindBrok\WatsonBridge\Exceptions\WatsonBridgeException;
 use FindBrok\WatsonTranslate\Contracts\TranslatorInterface;
-use Exception;
-use GuzzleHttp\Exception\ClientException;
 
 /**
  * Class Translator
+ *
  * @package FindBrok\WatsonTranslate
  */
 class Translator extends AbstractTranslator implements TranslatorInterface
 {
-
     /**
      * Translates the input text from the source language to the target language
      *
      * @param string $text
+     * @throws WatsonBridgeException
      * @return self
      */
-    public function textTranslate($text = '')
+    public function textTranslate($text)
     {
-        //No text input
-        if ($text == '') {
-            //We return
-            return $this;
-        }
-        try {
-            //Perform get request on client and return results
-            $this->request('GET', 'v2/translate')->send([
-                'query' => collect([
-                    'model_id'  => $this->modelId,
-                    'source'    => $this->from,
-                    'target'    => $this->to,
-                    'text'      => $text,
-                ])->reject(function ($item) {
-                    return $item == null || $item == '';
-                })->all()
-            ]);
-        } catch (ClientException $e) {
-            //Set response to null
-            $this->response = null;
-            //Set error message
-            $this->error = $e->getMessage();
-        }
+        //Send request to Watson
+        $this->results = $this->makeBridge()->get('v2/translate', collect([
+            'model_id'  => $this->getModelId(),
+            'source'    => $this->from,
+            'target'    => $this->to,
+            'text'      => $text,
+        ])->reject(function ($item) {
+            return $item == null || $item == '';
+        })->all())->getBody()->getContents();
         //Return translator object
         return $this;
     }
@@ -53,33 +39,20 @@ class Translator extends AbstractTranslator implements TranslatorInterface
      * Also used to translate multiple paragraphs or multiple inputs
      *
      * @param string|array $text
+     * @throws WatsonBridgeException
      * @return self
      */
-    public function bulkTranslate($text = null)
+    public function bulkTranslate($text )
     {
-        //No text input
-        if ($text == null) {
-            //We return
-            return $this;
-        }
-        try {
-            //Perform a Post request on client and return results
-            $this->request('POST', 'v2/translate')->send([
-                'json' => collect([
-                    'model_id'  => $this->modelId,
-                    'source'    => $this->from,
-                    'target'    => $this->to,
-                    'text'      => $text
-                ])->reject(function ($item) {
-                    return $item == null || $item == '';
-                })->all()
-            ]);
-        } catch (ClientException $e) {
-            //Set response to null
-            $this->response = null;
-            //Set error message
-            $this->error = $e->getMessage();
-        }
+        //Send request to Watson
+        $this->results = $this->makeBridge()->post('v2/translate', collect([
+            'model_id'  => $this->getModelId(),
+            'source'    => $this->from,
+            'target'    => $this->to,
+            'text'      => $text
+        ])->reject(function ($item) {
+            return $item == null || $item == '';
+        })->all())->getBody()->getContents();
         //Return translator object
         return $this;
     }
@@ -87,19 +60,16 @@ class Translator extends AbstractTranslator implements TranslatorInterface
     /**
      * List all languages that can be identified by watson
      *
-     * @return self|null
+     * @throws WatsonBridgeException
+     * @return self
      */
     public function listLanguages()
     {
-        try {
-            //Perform a Get request on client and return results
-            $this->request('GET', 'v2/identifiable_languages')->send();
-        } catch (ClientException $e) {
-            //Set response to null
-            $this->response = null;
-            //Set error message
-            $this->error = $e->getMessage();
-        }
+        //Send request to Watson
+        $this->results = $this->makeBridge()
+                              ->get('v2/identifiable_languages')
+                              ->getBody()
+                              ->getContents();
         //Return translator object
         return $this;
     }
@@ -109,23 +79,16 @@ class Translator extends AbstractTranslator implements TranslatorInterface
      * with a certain level of confidence
      *
      * @param string $text
+     * @throws WatsonBridgeException
      * @return self
      */
-    public function identifyLanguage($text = '')
+    public function identifyLanguage($text)
     {
-        try {
-            //Perform a post request to identify the language
-            $this->request('POST', 'v2/identify')->send([
-                'query' => collect([
-                    'text' => $text
-                ])->all()
-            ]);
-        } catch (ClientException $e) {
-            //Set response to null
-            $this->response = null;
-            //Set error message
-            $this->error = $e->getMessage();
-        }
+        //Send request to Watson
+        $this->results = $this->makeBridge()
+                              ->post('v2/identify', ['text' => $text], 'query')
+                              ->getBody()
+                              ->getContents();
         //Return translator object
         return $this;
     }
@@ -136,27 +99,20 @@ class Translator extends AbstractTranslator implements TranslatorInterface
      * @param bool $defaultOnly
      * @param string $sourceFilter
      * @param string $targetFilter
-     * @return self|null
+     * @throws WatsonBridgeException
+     * @return self
      */
     public function listModels($defaultOnly = null, $sourceFilter = null, $targetFilter = null)
     {
-        try {
-            //Perform a get request to list all models and return it
-            $this->request('GET', 'v2/models')->send([
-                'query' => collect([
-                    'source'    => $sourceFilter,
-                    'target'    => $targetFilter,
-                    'default'   => $defaultOnly,
-                ])->reject(function ($item) {
-                    return $item == null || $item == '';
-                })->all()
-            ]);
-        } catch (ClientException $e) {
-            //Set response to null
-            $this->response = null;
-            //Set error message
-            $this->error = $e->getMessage();
-        }
+        //Send request to Watson
+        $this->results = $this->makeBridge()
+                              ->get('v2/models', collect([
+                                  'source'    => $sourceFilter,
+                                  'target'    => $targetFilter,
+                                  'default'   => $defaultOnly,
+                              ])->reject(function ($item) {
+                                  return $item == null || $item == '';
+                              })->all())->getBody()->getContents();
         //Return translator object
         return $this;
     }
@@ -164,19 +120,16 @@ class Translator extends AbstractTranslator implements TranslatorInterface
     /**
      * Returns information, including training status, about a specified translation model.
      *
-     * @return self|null
+     * @throws WatsonBridgeException
+     * @return self
      */
     public function getModelDetails()
     {
-        try {
-            //Perform a get Request to get the model's Details and return it
-            $this->request('GET', 'v2/models/'.$this->modelId)->send();
-        } catch (ClientException $e) {
-            //Set response to null
-            $this->response = null;
-            //Set error message
-            $this->error = $e->getMessage();
-        }
+        //Send request to Watson
+        $this->results = $this->makeBridge()
+                              ->get('v2/models/'.$this->getModelId())
+                              ->getBody()
+                              ->getContents();
         //Return translator object
         return $this;
     }

@@ -13,23 +13,26 @@ interface TranslatorInterface
      * Translates the input text from the source language to the target language
      *
      * @param string $text
-     * @return \Illuminate\Support\Collection|null
+     * @throws WatsonBridgeException
+     * @return self
      */
-    public function textTranslate($text = '');
+    public function textTranslate($text);
 
     /**
      * Translate a large text from the source language to the target language.
      * Also used to translate multiple paragraphs or multiple inputs
      *
      * @param string|array $text
-     * @return \Illuminate\Support\Collection|null
+     * @throws WatsonBridgeException
+     * @return self
      */
-    public function bulkTranslate($text = null);
+    public function bulkTranslate($text);
 
     /**
      * List all languages that can be identified by watson
      *
-     * @return \Illuminate\Support\Collection|null
+     * @throws WatsonBridgeException
+     * @return self
      */
     public function listLanguages();
 
@@ -38,9 +41,10 @@ interface TranslatorInterface
      * with a certain level of confidence
      *
      * @param string $text
-     * @return \Illuminate\Support\Collection|null
+     * @throws WatsonBridgeException
+     * @return self
      */
-    public function identifyLanguage($text = '');
+    public function identifyLanguage($text);
 
     /**
      * Lists available standard and custom models by source or target language.
@@ -48,14 +52,16 @@ interface TranslatorInterface
      * @param bool $defaultOnly
      * @param string $sourceFilter
      * @param string $targetFilter
-     * @return \Illuminate\Support\Collection|null
+     * @throws WatsonBridgeException
+     * @return self
      */
     public function listModels($defaultOnly = null, $sourceFilter = null, $targetFilter = null);
 
     /**
      * Returns information, including training status, about a specified translation model.
      *
-     * @return \Illuminate\Support\Collection|null
+     * @throws WatsonBridgeException
+     * @return self
      */
     public function getModelDetails();
 
