@@ -1,4 +1,5 @@
 # Laravel 5 IBM Watson Translate
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/5383ddb7-8c07-433e-98c0-0cda2eedba76/big.png)](https://insight.sensiolabs.com/projects/5383ddb7-8c07-433e-98c0-0cda2eedba76)
 
 [![StyleCI](https://styleci.io/repos/50762162/shield?style=flat)](https://styleci.io/repos/50762162)
 [![Build Status](https://travis-ci.org/findbrok/laravel-watson-translate.svg?branch=master)](https://travis-ci.org/findbrok/laravel-watson-translate)
