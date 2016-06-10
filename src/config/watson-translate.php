@@ -63,6 +63,6 @@ return [
     |
     */
     'models' => [
-        'default' => env('WATSON_TRANSLATE_DEFAULT_MODEL', 'en-fr')
+        'default' => env('WATSON_TRANSLATE_DEFAULT_MODEL', 'en-fr'),
     ],
 ];

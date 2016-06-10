@@ -9,19 +9,17 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 
 /**
- * Class WatsonTranslateServiceProvider
- *
- * @package FindBrok\WatsonTranslate
+ * Class WatsonTranslateServiceProvider.
  */
 class WatsonTranslateServiceProvider extends ServiceProvider
 {
     /**
-     * Define all Facades here
+     * Define all Facades here.
      *
      * @var array
      */
     protected $facades = [
-        'WatsonTranslate' => TranslatorFacade::class
+        'WatsonTranslate' => TranslatorFacade::class,
     ];
 
     /**
@@ -33,7 +31,7 @@ class WatsonTranslateServiceProvider extends ServiceProvider
     {
         //Publish config file
         $this->publishes([
-            __DIR__.'/config/watson-translate.php' => config_path('watson-translate.php')
+            __DIR__.'/config/watson-translate.php' => config_path('watson-translate.php'),
         ], 'config');
     }
 
@@ -53,7 +51,7 @@ class WatsonTranslateServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register all bindings in the IOC
+     * Register all bindings in the IOC.
      *
      * @return void
      */
@@ -74,7 +72,7 @@ class WatsonTranslateServiceProvider extends ServiceProvider
     }
 
     /**
-     * Registers all facades
+     * Registers all facades.
      *
      * @return void
      */

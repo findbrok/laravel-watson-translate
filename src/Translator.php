@@ -6,14 +6,12 @@ use FindBrok\WatsonBridge\Exceptions\WatsonBridgeException;
 use FindBrok\WatsonTranslate\Contracts\TranslatorInterface;
 
 /**
- * Class Translator
- *
- * @package FindBrok\WatsonTranslate
+ * Class Translator.
  */
 class Translator extends AbstractTranslator implements TranslatorInterface
 {
     /**
-     * Translates the input text from the source language to the target language
+     * Translates the input text from the source language to the target language.
      *
      * @param string $text
      * @throws WatsonBridgeException
@@ -36,20 +34,20 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 
     /**
      * Translate a large text from the source language to the target language.
-     * Also used to translate multiple paragraphs or multiple inputs
+     * Also used to translate multiple paragraphs or multiple inputs.
      *
      * @param string|array $text
      * @throws WatsonBridgeException
      * @return self
      */
-    public function bulkTranslate($text )
+    public function bulkTranslate($text)
     {
         //Send request to Watson
         $this->results = $this->makeBridge()->post('v2/translate', collect([
             'model_id'  => $this->getModelId(),
             'source'    => $this->from,
             'target'    => $this->to,
-            'text'      => $text
+            'text'      => $text,
         ])->reject(function ($item) {
             return is_null($item) || empty($item);
         })->all())->getBody()->getContents();
@@ -58,7 +56,7 @@ class Translator extends AbstractTranslator implements TranslatorInterface
     }
 
     /**
-     * List all languages that can be identified by watson
+     * List all languages that can be identified by watson.
      *
      * @throws WatsonBridgeException
      * @return self
@@ -76,7 +74,7 @@ class Translator extends AbstractTranslator implements TranslatorInterface
 
     /**
      * Identify the language in which the text is written
-     * with a certain level of confidence
+     * with a certain level of confidence.
      *
      * @param string $text
      * @throws WatsonBridgeException
@@ -135,7 +133,7 @@ class Translator extends AbstractTranslator implements TranslatorInterface
     }
 
     /**
-     * Creates a new translation model
+     * Creates a new translation model.
      *
      * @param string $baseModelId
      * @param string $modelName
@@ -147,7 +145,7 @@ class Translator extends AbstractTranslator implements TranslatorInterface
     }
 
     /**
-     * Delete a translation model
+     * Delete a translation model.
      *
      * @param string $modelId
      * @return mixed
