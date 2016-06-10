@@ -1,16 +1,14 @@
 <?php
 
-
 namespace FindBrok\WatsonTranslate\Contracts;
 
 /**
- * Interface TranslatorInterface
- * @package FindBrok\WatsonTranslate\Contracts
+ * Interface TranslatorInterface.
  */
 interface TranslatorInterface
 {
     /**
-     * Translates the input text from the source language to the target language
+     * Translates the input text from the source language to the target language.
      *
      * @param string $text
      * @throws WatsonBridgeException
@@ -20,7 +18,7 @@ interface TranslatorInterface
 
     /**
      * Translate a large text from the source language to the target language.
-     * Also used to translate multiple paragraphs or multiple inputs
+     * Also used to translate multiple paragraphs or multiple inputs.
      *
      * @param string|array $text
      * @throws WatsonBridgeException
@@ -29,7 +27,7 @@ interface TranslatorInterface
     public function bulkTranslate($text);
 
     /**
-     * List all languages that can be identified by watson
+     * List all languages that can be identified by watson.
      *
      * @throws WatsonBridgeException
      * @return self
@@ -38,7 +36,7 @@ interface TranslatorInterface
 
     /**
      * Identify the language in which the text is written
-     * with a certain level of confidence
+     * with a certain level of confidence.
      *
      * @param string $text
      * @throws WatsonBridgeException
@@ -66,7 +64,7 @@ interface TranslatorInterface
     public function getModelDetails();
 
     /**
-     * Creates a new translation model
+     * Creates a new translation model.
      *
      * @param string $baseModelId
      * @param string $modelName
@@ -75,7 +73,7 @@ interface TranslatorInterface
     public function createModel($baseModelId = null, $modelName = null);
 
     /**
-     * Delete a translation model
+     * Delete a translation model.
      *
      * @param string $modelId
      * @return mixed

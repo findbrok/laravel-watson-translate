@@ -4,33 +4,33 @@ use FindBrok\WatsonTranslate\Tests\Mocks\MockResponses;
 use Orchestra\Testbench\TestCase;
 
 /**
- * Class TestCase
+ * Class TestCase.
  */
 class TestTranslator extends TestCase
 {
     /**
-     * Mock Responses
+     * Mock Responses.
      *
      * @var MockResponses
      */
     protected $mockResponses;
 
     /**
-     * Translator class to use
+     * Translator class to use.
      *
      * @var string
      */
     protected $translatorClass;
 
     /**
-     * Translator instance
+     * Translator instance.
      *
      * @var mixed
      */
     protected $translator;
 
     /**
-     * Watson Bridge
+     * Watson Bridge.
      *
      * @var \FindBrok\WatsonBridge\Bridge
      */
@@ -70,7 +70,7 @@ class TestTranslator extends TestCase
 
     /**
      * Test if the getter really returns the property
-     * and that property is set
+     * and that property is set.
      */
     public function testSetterGetter()
     {
@@ -82,7 +82,7 @@ class TestTranslator extends TestCase
 
     /**
      * Test that when a property does not exists getter
-     * returns null
+     * returns null.
      */
     public function testPropertyInexistent_ReturnNull()
     {
@@ -90,7 +90,7 @@ class TestTranslator extends TestCase
     }
 
     /**
-     * Test textTranslate with getTranslation method returns string
+     * Test textTranslate with getTranslation method returns string.
      */
     public function testTextTranslate_WithGetTranslation_ReturnString()
     {
@@ -109,7 +109,7 @@ class TestTranslator extends TestCase
     }
 
     /**
-     * Test  the textTranslate with rawResults method returns json
+     * Test  the textTranslate with rawResults method returns json.
      */
     public function testTextTranslate_WithRawResults_ReturnJson()
     {
@@ -127,7 +127,7 @@ class TestTranslator extends TestCase
     }
 
     /**
-     * Test the textTranslate with arrayResults method returns array
+     * Test the textTranslate with arrayResults method returns array.
      */
     public function testTextTranslate_WithArrayResults_ReturnArray()
     {
@@ -145,7 +145,7 @@ class TestTranslator extends TestCase
     }
 
     /**
-     * Test textTranslate with collectResults method returns collection
+     * Test textTranslate with collectResults method returns collection.
      */
     public function testTextTranslate_WithCollectionResults_ReturnCollection()
     {
@@ -163,7 +163,7 @@ class TestTranslator extends TestCase
     }
 
     /**
-     * Test textTranslate throws WatsonBridgeException
+     * Test textTranslate throws WatsonBridgeException.
      *
      * @expectedException \FindBrok\WatsonBridge\Exceptions\WatsonBridgeException
      */
@@ -180,7 +180,7 @@ class TestTranslator extends TestCase
     }
 
     /**
-     * Test the bulkTranslate method with getTranslation method returns string
+     * Test the bulkTranslate method with getTranslation method returns string.
      */
     public function testBulkTranslate_WithGetTranslation_ReturnArray()
     {
@@ -198,7 +198,7 @@ class TestTranslator extends TestCase
     }
 
     /**
-     * Test the bulkTranslate method with rawResults method returns json
+     * Test the bulkTranslate method with rawResults method returns json.
      */
     public function testBulkTranslate_WithRawResults_ReturnJson()
     {
@@ -216,7 +216,7 @@ class TestTranslator extends TestCase
     }
 
     /**
-     * Test the bulkTranslate method with arrayResults method returns array
+     * Test the bulkTranslate method with arrayResults method returns array.
      */
     public function testBulkTranslate_WithArrayResults_ReturnArray()
     {
@@ -234,7 +234,7 @@ class TestTranslator extends TestCase
     }
 
     /**
-     * Test the bulkTranslate method with collectResults method returns collection
+     * Test the bulkTranslate method with collectResults method returns collection.
      */
     public function testBulkTranslate_WithCollectionResults_ReturnCollection()
     {
@@ -252,7 +252,7 @@ class TestTranslator extends TestCase
     }
 
     /**
-     * Test the bulkTranslate method throws WatsonBridgeException
+     * Test the bulkTranslate method throws WatsonBridgeException.
      *
      * @expectedException \FindBrok\WatsonBridge\Exceptions\WatsonBridgeException
      */

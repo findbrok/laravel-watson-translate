@@ -5,8 +5,7 @@ namespace FindBrok\WatsonTranslate\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * Class TranslatorFacade
- * @package FindBrok\WatsonTranslate\Facades
+ * Class TranslatorFacade.
  */
 class TranslatorFacade extends Facade
 {

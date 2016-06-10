@@ -5,55 +5,54 @@ namespace FindBrok\WatsonTranslate;
 use FindBrok\WatsonTranslate\Presenters\ResultsCollection;
 
 /**
- * Class AbstractTranslator
- * @package FindBrok\WatsonTranslate
+ * Class AbstractTranslator.
  */
 abstract class AbstractTranslator
 {
-    /**
+    /*
      * Translator's traits
      */
     use ResultsCollection;
 
     /**
-     * The results from API
+     * The results from API.
      *
      * @var string
      */
     protected $results = null;
 
     /**
-     * The language from which we are translating
+     * The language from which we are translating.
      *
      * @var string
      */
     protected $from = null;
 
     /**
-     * The language to which we want to get results
+     * The language to which we want to get results.
      *
      * @var string
      */
     protected $to = null;
 
     /**
-     * The model Id we want to use for translation
+     * The model Id we want to use for translation.
      *
      * @var string
      */
     protected $modelId = null;
 
     /**
-     * Request Headers
+     * Request Headers.
      *
      * @var array
      */
     protected $headers = [
-        'Accept' => 'application/json'
+        'Accept' => 'application/json',
     ];
 
     /**
-     * Getting attributes
+     * Getting attributes.
      *
      * @param $variable
      * @return mixed
@@ -66,11 +65,10 @@ abstract class AbstractTranslator
             return $this->$attribute;
         }
         //We return null
-        return null;
     }
 
     /**
-     * Append Headers to request
+     * Append Headers to request.
      *
      * @param array $headers
      * @return self
@@ -84,7 +82,7 @@ abstract class AbstractTranslator
     }
 
     /**
-     * Return the headers used for making request
+     * Return the headers used for making request.
      *
      * @return array
      */
@@ -92,12 +90,12 @@ abstract class AbstractTranslator
     {
         //Return headers
         return collect($this->headers)->merge([
-            'X-Watson-Learning-Opt-Out' => config('watson-translate.x_watson_learning_opt_out')
+            'X-Watson-Learning-Opt-Out' => config('watson-translate.x_watson_learning_opt_out'),
         ])->all();
     }
 
     /**
-     * Make a Bridge to Send API Request to Watson
+     * Make a Bridge to Send API Request to Watson.
      *
      * @return \FindBrok\WatsonBridge\Bridge
      */
@@ -107,7 +105,7 @@ abstract class AbstractTranslator
     }
 
     /**
-     * Return the results from API
+     * Return the results from API.
      *
      * @return string|null
      */
@@ -117,7 +115,7 @@ abstract class AbstractTranslator
     }
 
     /**
-     * Return Model id to Use
+     * Return Model id to Use.
      *
      * @return string|null
      */
@@ -128,7 +126,7 @@ abstract class AbstractTranslator
 
     /**
      * Set the language code of the language
-     * we are translating from
+     * we are translating from.
      *
      * @param string $lang
      * @return self
@@ -143,7 +141,7 @@ abstract class AbstractTranslator
 
     /**
      * Set the language code of the language
-     * we are translating to
+     * we are translating to.
      *
      * @param string $lang
      * @return self
@@ -158,7 +156,7 @@ abstract class AbstractTranslator
 
     /**
      * Set the model id of the model we want to use
-     * for translation, overrides to and from
+     * for translation, overrides to and from.
      *
      * @param string $modelName
      * @return self

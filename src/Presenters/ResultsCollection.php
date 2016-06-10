@@ -3,13 +3,12 @@
 namespace FindBrok\WatsonTranslate\Presenters;
 
 /**
- * Class ResultsCollection
- * @package FindBrok\WatsonTranslate\Presenters
+ * Class ResultsCollection.
  */
 trait ResultsCollection
 {
     /**
-     * Checks and see if we have some translations in the results
+     * Checks and see if we have some translations in the results.
      *
      * @return bool
      */
@@ -19,7 +18,7 @@ trait ResultsCollection
     }
 
     /**
-     * Checks and see if we have multiple translations in the results
+     * Checks and see if we have multiple translations in the results.
      *
      * @return bool
      */
@@ -29,7 +28,7 @@ trait ResultsCollection
     }
 
     /**
-     * Returns the results of the response array
+     * Returns the results of the response array.
      *
      * @return array|null
      */
@@ -39,7 +38,7 @@ trait ResultsCollection
     }
 
     /**
-     * Returns the results of the response as a collection
+     * Returns the results of the response as a collection.
      *
      * @return \Illuminate\Support\Collection
      */
@@ -49,7 +48,7 @@ trait ResultsCollection
     }
 
     /**
-     * Returns only the translations from results
+     * Returns only the translations from results.
      *
      * @param bool $asCollection
      * @return mixed
@@ -73,11 +72,10 @@ trait ResultsCollection
                 collect(collect($this->collectResults()->get('translations'))->first())->get('translation');
         }
         //Nothing to return
-        return null;
     }
 
     /**
-     * Return languages names only
+     * Return languages names only.
      *
      * @param bool $asCollection
      * @return array|\Illuminate\Support\Collection
@@ -94,7 +92,7 @@ trait ResultsCollection
         //No language
         if ($languagesName->count() == 0) {
             //we return null
-            return null;
+            return;
         }
 
         //return languages as array or collection
@@ -102,7 +100,7 @@ trait ResultsCollection
     }
 
     /**
-     * Return languages codes only
+     * Return languages codes only.
      *
      * @param bool $asCollection
      * @return array|\Illuminate\Support\Collection
@@ -119,7 +117,7 @@ trait ResultsCollection
         //No language
         if ($languagesCodes->count() == 0) {
             //we return null
-            return null;
+            return;
         }
 
         //return languages as array or collection
@@ -128,7 +126,7 @@ trait ResultsCollection
 
     /**
      * Get the language with the highest level of
-     * confidence
+     * confidence.
      *
      * @return array|\Illuminate\Support\Collection
      */
