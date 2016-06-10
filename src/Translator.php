@@ -28,7 +28,7 @@ class Translator extends AbstractTranslator implements TranslatorInterface
             'target'    => $this->to,
             'text'      => $text,
         ])->reject(function ($item) {
-            return $item == null || $item == '';
+            return is_null($item) || empty($item);
         })->all())->getBody()->getContents();
         //Return translator object
         return $this;
@@ -51,7 +51,7 @@ class Translator extends AbstractTranslator implements TranslatorInterface
             'target'    => $this->to,
             'text'      => $text
         ])->reject(function ($item) {
-            return $item == null || $item == '';
+            return is_null($item) || empty($item);
         })->all())->getBody()->getContents();
         //Return translator object
         return $this;
@@ -111,7 +111,7 @@ class Translator extends AbstractTranslator implements TranslatorInterface
                                   'target'    => $targetFilter,
                                   'default'   => $defaultOnly,
                               ])->reject(function ($item) {
-                                  return $item == null || $item == '';
+                                  return is_null($item) || empty($item);
                               })->all())->getBody()->getContents();
         //Return translator object
         return $this;

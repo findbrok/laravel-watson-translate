@@ -11,8 +11,8 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "laravel/framework": "~5.0|~5.1|~5.2",
-        "findbrok/php-watson-api-bridge": "^1.0"
+        "laravel/framework": "5.0.*|5.1.*|5.2.*",
+        "findbrok/php-watson-api-bridge": "1.0.*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -22,12 +22,20 @@
         "guzzlehttp/guzzle": "~5.3|~6.0|~6.2"
     },
     "autoload": {
-        "classmap": [
-            "tests/TestCase.php"
-        ],
         "psr-4": {
-            "FindBrok\\WatsonTranslate\\": "src/",
+            "FindBrok\\WatsonTranslate\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "FindBrok\\WatsonTranslate\\Tests\\": "tests/"
         }
-    }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

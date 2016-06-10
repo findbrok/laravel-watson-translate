@@ -88,7 +88,7 @@ trait ResultsCollection
         $languagesName = collect($this->collectResults()->get('languages'))->transform(function ($item) {
             return isset($item['name']) ? $item['name'] : null;
         })->reject(function ($item) {
-            return $item == null;
+            return is_null($item);
         });
 
         //No language
@@ -113,7 +113,7 @@ trait ResultsCollection
         $languagesCodes = collect($this->collectResults()->get('languages'))->transform(function ($item) {
             return isset($item['language']) ? $item['language'] : null;
         })->reject(function ($item) {
-            return $item == null;
+            return is_null($item);
         });
 
         //No language

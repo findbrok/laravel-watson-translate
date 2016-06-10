@@ -1,15 +1,45 @@
 <?php
 
 use FindBrok\WatsonTranslate\Tests\Mocks\MockResponses;
-use Orchestra\Testbench\TestCase as TestBenchTestCase;
+use Orchestra\Testbench\TestCase;
 
 /**
  * Class TestCase
  */
-class TestCase extends TestBenchTestCase
+class TestTranslator extends TestCase
 {
     /**
-     * Setup
+     * Mock Responses
+     *
+     * @var MockResponses
+     */
+    protected $mockResponses;
+
+    /**
+     * Translator class to use
+     *
+     * @var string
+     */
+    protected $translatorClass;
+
+    /**
+     * Translator instance
+     *
+     * @var mixed
+     */
+    protected $translator;
+
+    /**
+     * Watson Bridge
+     *
+     * @var \FindBrok\WatsonBridge\Bridge
+     */
+    protected $bridge;
+
+    /**
+     * Setup the test environment.
+     *
+     * @return void
      */
     public function setUp()
     {
