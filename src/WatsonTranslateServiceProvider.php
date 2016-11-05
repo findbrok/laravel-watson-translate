@@ -31,7 +31,7 @@ class WatsonTranslateServiceProvider extends ServiceProvider
     {
         //Publish config file
         $this->publishes([
-            __DIR__.'/config/watson-translate.php' => config_path('watson-translate.php'),
+            __DIR__ . '/config/watson-translate.php' => config_path('watson-translate.php'),
         ], 'config');
     }
 
@@ -43,7 +43,7 @@ class WatsonTranslateServiceProvider extends ServiceProvider
     public function register()
     {
         //Merge config file
-        $this->mergeConfigFrom(__DIR__.'/config/watson-translate.php', 'watson-translate');
+        $this->mergeConfigFrom(__DIR__ . '/config/watson-translate.php', 'watson-translate');
         //Register Bindings
         $this->registerBinding();
         //Add Facades to the Translator service
