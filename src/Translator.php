@@ -125,7 +125,7 @@ class Translator extends AbstractTranslator implements TranslatorInterface
     {
         //Send request to Watson
         $this->results = $this->makeBridge()
-                              ->get('v2/models/'.$this->getModelId())
+                              ->get('v2/models/' . $this->getModelId())
                               ->getBody()
                               ->getContents();
         //Return translator object
