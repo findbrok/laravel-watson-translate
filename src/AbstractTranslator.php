@@ -166,7 +166,7 @@ abstract class AbstractTranslator
         //Set the model id
         $this->modelId = ($modelName == '') ?
                          config('watson-translate.models.default') :
-                         config('watson-translate.models.'.$modelName);
+                         config('watson-translate.models.' . $modelName);
         //return the translator
         return $this;
     }
