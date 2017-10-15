@@ -137,21 +137,42 @@ class Translator extends AbstractTranslator implements TranslatorInterface
      *
      * @param string $baseModelId
      * @param string $modelName
-     * @return mixed
+     * @return self
      */
     public function createModel($baseModelId = null, $modelName = null)
     {
-        //TODO:Implement creation of Translation model
+        //Send request to Watson
+        $this->results = $this->makeBridge()
+                              ->post('v2/models', collect([
+                                  [
+                                    'name'    => 'base_model_id',
+                                    'contents'    => $baseModelId,
+                                  ],
+                                  [
+                                    'name'    => 'name',
+                                    'contents'    => $modelName,
+                                  ],
+                              ])->reject(function ($item) {
+                                  return is_null($item) || empty($item);
+                              })->all(), 'multipart')->getBody()->getContents();
+        //Return translator object
+        return $this;
     }
 
     /**
      * Delete a translation model.
      *
      * @param string $modelId
-     * @return mixed
+     * @throws WatsonBridgeException
+     * @return self
      */
     public function deleteModel($modelId = null)
     {
-        //TODO:Implement deletion of translation model
+        //Send request to Watson
+        $this->results = $this->makeBridge()
+          ->delete('v2/models/' . $modelId, null)
+          ->getBody()->getContents();
+        //Return translator object
+        return $this;
     }
 }
