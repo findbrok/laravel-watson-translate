@@ -53,11 +53,6 @@ Set your correct credentials and default configuration for using your IBM Watson
 
 Read the [Docs](https://github.com/findbrok/laravel-watson-translate/wiki)
 
-## TODO
-
-- [ ] Create Translation Model
-- [ ] Delete Translation Model
-
 ## Credits
 
 [![Percy Mamedy](https://img.shields.io/badge/Author-Percy%20Mamedy-orange.svg)](https://twitter.com/PercyMamedy)

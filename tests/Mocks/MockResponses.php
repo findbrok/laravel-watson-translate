@@ -2,8 +2,8 @@
 
 namespace FindBrok\WatsonTranslate\Tests\Mocks;
 
-use GuzzleHttp\Psr7\Response;
 use Faker\Factory as Faker;
+use GuzzleHttp\Psr7\Response;
 
 /**
  * Class MockResponses.
@@ -210,5 +210,55 @@ class MockResponses
             'name' => '',
             'train_log' => null,
         ])->toJson());
+    }
+
+    /**
+     * Mock a response for delete model.
+     *
+     * @return GuzzleHttp\Psr7\Response
+     */
+    public function pretendDeleteModelResponse()
+    {
+        //Build a new successful response for delete model
+        return new Response(200, [
+            'Content-Type' => 'application/json',
+        ], collect([
+            'status' => 'OK',
+        ])->toJson());
+    }
+
+    /**
+     * Mock a raw json results for delete model function.
+     *
+     * @return string
+     */
+    public function pretendDeleteModelRaw()
+    {
+        return $this->pretendDeleteModelResponse()->getBody()->getContents();
+    }
+
+    /**
+     * Mock a response for create model.
+     *
+     * @return GuzzleHttp\Psr7\Response
+     */
+    public function pretendCreateModelResponse()
+    {
+        //Build a new successful response for delete model
+        return new Response(200, [
+            'Content-Type' => 'application/json',
+        ], collect([
+            'model_id' => 'newModelId',
+        ])->toJson());
+    }
+
+    /**
+     * Mock a raw json results for create model function.
+     *
+     * @return string
+     */
+    public function pretendCreateModelRaw()
+    {
+        return $this->pretendCreateModelResponse()->getBody()->getContents();
     }
 }

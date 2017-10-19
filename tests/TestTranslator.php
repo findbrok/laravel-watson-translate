@@ -1,7 +1,7 @@
 <?php
 
-use FindBrok\WatsonTranslate\Tests\Mocks\MockResponses;
 use Orchestra\Testbench\TestCase;
+use FindBrok\WatsonTranslate\Tests\Mocks\MockResponses;
 
 /**
  * Class TestCase.
@@ -53,7 +53,7 @@ class TestTranslator extends TestCase
         //Mock Watson Bridge
         $this->bridge = $this->getMockBuilder('FindBrok\WatsonBridge\Bridge')
                              ->disableOriginalConstructor()
-                             ->setMethods(['post', 'get'])
+                             ->setMethods(['post', 'get', 'delete'])
                              ->getMock();
     }
 
@@ -266,5 +266,75 @@ class TestTranslator extends TestCase
         $this->app->instance('WatsonTranslateBridge', $this->bridge);
 
         $this->translator->bulkTranslate(['lorem', 'nam'])->getTranslation();
+    }
+
+    /**
+     * Test the deleteModel method throws WatsonBridgeException.
+     *
+     * @expectedException \FindBrok\WatsonBridge\Exceptions\WatsonBridgeException
+     */
+    public function testDeleteModel_With_AnInvalidModelId_ThrowsClientException_ReturnsNull()
+    {
+        //Set return value of delete method
+        $this->bridge->method('delete')
+            ->withAnyParameters()
+            ->will($this->throwException(new \FindBrok\WatsonBridge\Exceptions\WatsonBridgeException('InvalidUuidMessage', 400)));
+        //Override Bridge in IOC
+        $this->app->instance('WatsonTranslateBridge', $this->bridge);
+
+        $this->translator->deleteModel('invalid-uid');
+    }
+
+    /**
+     * Test the deleteModel method results in an OK status response.
+     */
+    public function testDeleteModel_Results_In_An_OK_Status_Response()
+    {
+        //Set return value of delete method
+        $this->bridge->method('delete')
+            ->withAnyParameters()
+            ->willReturn($this->mockResponses->pretendDeleteModelResponse());
+        //Override Bridge in IOC
+        $this->app->instance('WatsonTranslateBridge', $this->bridge);
+
+        $this->assertEquals(
+          collect(json_decode($this->mockResponses->pretendDeleteModelRaw(), true)),
+          $this->translator->deleteModel('model-uid')->collectResults()
+        );
+    }
+
+    /**
+     * Test the createModel method throws WatsonBridgeException.
+     *
+     * @expectedException \FindBrok\WatsonBridge\Exceptions\WatsonBridgeException
+     */
+    public function testCreateModel_ThrowsClientException_ReturnsNull()
+    {
+        //Set return value of delete method
+        $this->bridge->method('post')
+            ->withAnyParameters()
+            ->will($this->throwException(new \FindBrok\WatsonBridge\Exceptions\WatsonBridgeException('ErrorCreatingModel', 403)));
+        //Override Bridge in IOC
+        $this->app->instance('WatsonTranslateBridge', $this->bridge);
+
+        $this->translator->createModel('base_model_id', 'name');
+    }
+
+    /**
+     * Test the createModel method results contains new model id.
+     */
+    public function testCreateModel_Results_Contains_The_New_Model_Id()
+    {
+        //Set return value of delete method
+        $this->bridge->method('post')
+            ->withAnyParameters()
+            ->willReturn($this->mockResponses->pretendCreateModelResponse());
+        //Override Bridge in IOC
+        $this->app->instance('WatsonTranslateBridge', $this->bridge);
+
+        $this->assertEquals(
+          collect(json_decode($this->mockResponses->pretendCreateModelRaw(), true)),
+          $this->translator->createModel('base-model-id', 'name')->collectResults()
+        );
     }
 }
